@@ -1,0 +1,6 @@
+name="Vaibhav"
+for i in name:
+	print(i)
+	
+name1="Harry"
+print(name1[-4:-2])
