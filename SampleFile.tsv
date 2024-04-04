@@ -1,0 +1,3 @@
+#Resource Name	User Account	Password	Description	DNS Name	Department	Location	OS Type	Resource Type	Resource URL	Description	Distinguished Name
+chtmkt-john-lt	JohnM	u4KM#&DU#9P8ZJND	Office Laptop	192.168.176.1	Marketing	Chennai	Windows	Windows	https://john-mathew:8282	Head of Marketing	JohnM
+chtmkt-matt-pc	MattH	I#Uv4B0vpT5	Personal Computer	192.168.178.4	Sales	Chennai	Linux	Linux	https://matt-hardy:8282	Sales Auditor	MattH
