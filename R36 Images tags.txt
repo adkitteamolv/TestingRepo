@@ -1,0 +1,29 @@
+tag created from QA as refract-9.6.19  for R36 release  -- > Monitor  mosaiccloudacr.azurecr.io/mosaic-ai-logistics/refract-monitor-backend:refract-9.6.19
+tag created from QA as refract-1.2.0.12  for R36 release ---> Workflow
+
+UAM  mosaiccloudacr.azurecr.io/mosaic-data-catalogue/user-management:1.0.61.22
+mosaiccloudacr.azurecr.io/mosaic-ai-logistics/user-management:1.0.61.22
+
+LENS_RULE_MANAGER mosaiccloudacr.azurecr.io/insighthub/lens_rule_manager_service:2.9.27
+
+
+https://git.lti-aiq.in/insighthub/lens_rule_manager_service/-/tags/2.9.27 --> lens rule
+
+
+Monitor R36
+job.ai_lens_manage_console_notification.url       = http://notification-service/notification/v1/notification-add
+job.notification.url                              = http://notification-service/notification/v1/notification
+job.notification.template.url                     = http://notification-service/notification/v1/template
+job.monitor.alert_url                                = http://notification-service/notification/v1/alert
+job.monitor.spawnner_url                          = http://scheduler-spawner:7070/scheduler/api/v1/delete_k8_service_objects
+
+
+UAM
+aiops.post.notification.url=http://notification-service/notification/v1/notification/email
+
+
+
+LENS_RULE_MANAGER
+
+app.managedNotificationUrl=http://notification-service/notification/v1/notification-add
+app.notificationUrl=http://notification-service/notification/v1/notification/email
