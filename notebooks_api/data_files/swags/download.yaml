@@ -1,0 +1,24 @@
+Endpoint to download data file
+---
+tags:
+  - data files
+parameters:
+  - in: query
+    name: filename
+    required: true
+    schema:
+      type: string
+  - in: query
+    name: folder_struct
+    required: true
+    schema:
+      type: string
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

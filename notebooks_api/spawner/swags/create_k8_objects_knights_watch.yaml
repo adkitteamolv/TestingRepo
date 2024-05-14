@@ -1,0 +1,29 @@
+API to create k8 object required in knights-watch
+---
+tags:
+  - knights-watch
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - template_id
+        - pod_name
+      properties:
+        template_id:
+          type: string
+          description: template id
+        pod_name:
+          type: string
+          description: pod name
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

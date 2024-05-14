@@ -1,0 +1,22 @@
+API to get enabled git Repository
+---
+tags:
+  - Repository
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+#  - in: path
+#    name: repo_status
+#    description: Enabled/Disabed status of Repo
+#    type: string
+#    required: true
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

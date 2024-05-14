@@ -1,0 +1,62 @@
+API to update git repo
+---
+tags:
+  - Repository
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: path
+    name: repo_id
+    description: UUID of the repository
+    type: string
+    required: true
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: create_git_repo
+      type: object
+      properties:
+        repo_url:
+          type: string
+          description: Repository url
+        username:
+          type: string
+          description: username for repository
+        password:
+          type: string
+          description: password for repository
+        repo_name:
+          type: string
+          description: Repository Name
+        repo_status:
+          type: string
+          description: Enable or Disable repo
+        base_folder:
+          type: string
+          description: folder of repository from where user can pull files.
+        branch:
+          type: string
+          description: Name of branch
+        repo_type:
+          type: string
+          enum: [Github, Gitlab, Bitbucket]
+          description: repository type can be Github, Gitlab, Bitbucket
+        access_category:
+          type: string
+          enum: [PUBLIC, PRIVATE]
+          description: access_category can be PUBLIC, PRIVATE
+        secure_flag:
+          type: string
+          description: password should be encoded using base64 encoding if secure_flag is true
+
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,39 @@
+API to give the activity of notebooks inside project
+---
+tags:
+  - project
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: activity
+      type: object
+      properties:
+        project_id:
+          type: integer
+        start_time:
+          type: integer
+        end_time:
+          type: integer
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

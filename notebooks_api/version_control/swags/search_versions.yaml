@@ -1,0 +1,87 @@
+This API will get version data from VCS for given version number and component. If version_number is "all" then it will return list.
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: component_type
+    in: query
+    type: string
+    required: true
+    description: Type of component
+  - name: component_id
+    in: query
+    type: string
+    required: true
+    description: ID of component
+  - name: version_number
+    in: query
+    type: string
+    required: true
+    description: Version number
+  - name: offset
+    in: query
+    type: int
+    required: false
+    default: 0
+    description: Offset
+  - name: limit
+    in: query
+    type: int
+    required: false
+    default: 10
+    description: Limit
+  - name: order
+    in: query
+    type: string
+    required: false
+    default: version_number.DESC
+    description: Sort order
+responses:
+  200:
+    description: Success
+    schema:
+      $ref: "#/definitions/SearchResponse"
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+definitions:
+  SearchResponse:
+    description: Search result
+    type: object
+    required:
+      - id
+      - commit_id
+      - component_id
+      - component_type
+      - commit_message
+      - project_id
+      - checked_in_by
+      - checked_in_time
+      - version_number
+    properties:
+      id:
+        type: integer
+      component_id:
+        type: string
+      component_type:
+        type: string
+      version_number:
+        type: string
+      commit_id:
+        type: string
+      commit_message:
+        type: string
+      project_id:
+        type: string
+      data:
+        type: object
+      checked_in_by:
+        type: string
+      checked_in_time:
+        type: string

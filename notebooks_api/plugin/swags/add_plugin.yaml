@@ -1,0 +1,82 @@
+API to create a new plugin
+---
+tags:
+  - Custom Plugin
+parameters:
+  - in: body
+    name: body
+    schema:
+      id: add_plugin_data
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the plugin
+        description:
+          type: string
+          description: description of the plugin
+        category:
+          type: string
+          description: category of the plugin
+        status:
+          type: string
+          description: status of the plugin
+        icon:
+          type: string
+          description: icon of the plugin
+        width:
+          type: string
+          description: width of the plugin
+        height:
+          type: string
+          description: height of the plugin
+        color:
+          type: string
+          description: color of the plugin
+        thumbnail:
+          type: string
+          description: thumbnail of the plugin
+        multiInputNode:
+          type: string
+          description: multiInputNode of the plugin
+        nodeBackgroundColor:
+          type: string
+          description: nodeBackgroundColor of the plugin
+        input_form_type:
+          type: string
+          description: input_form_type of the plugin
+        input_parameter_json:
+          type: object
+          description: input_parameter_json of the plugin
+        input_parameter_file_name:
+          type: string
+          description: input_parameter_file_name of the plugin
+        base_image_type:
+          type: string
+          description: base_image_type of the plugin
+        plugin_code_source:
+          type: string
+          description: plugin_code_source of the plugin
+        valid_sections:
+          type: string
+          description: valid_sections of the plugin
+        execution_command:
+          type: string
+          description: execution_command of the plugin
+        type:
+          type: string
+          description: type of the plugin
+        plugin_type:
+          type: string
+          description: plugin_type
+      required:
+        - name
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

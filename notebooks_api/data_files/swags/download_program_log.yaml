@@ -1,0 +1,22 @@
+Endpoint to download program logs file
+---
+tags:
+  - program logs
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: snapshot_name
+    in: path
+    type: string
+    required: true
+    description: SnapShot Name to download program logs from
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,33 @@
+API to upload on git
+---
+tags:
+  - Version Control System
+parameters:
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - name: version_id
+    in: path
+    type: string
+    required: true
+    description: Identifier for version
+  - name: repo_id
+    in: query
+    type: string
+    description: Repository Id
+  - name: branch
+    in: query
+    type: string
+    description: Branch
+
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,45 @@
+API to delete k8 service objects
+---
+tags:
+  - Delete k8 Service Objects
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: data
+    in: body
+    type: string
+    required: true
+    description: data
+  - name: grace_period
+    in: query
+    type: integer
+    required: true
+    description: grace period
+    default: 5
+  - name: propagation_policy
+    in: query
+    type: string
+    required: true
+    description: Foreground, Background, Orphan. 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
+    default: Foreground
+
+
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

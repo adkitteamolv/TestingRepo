@@ -1,0 +1,48 @@
+API to update the branch metadata
+---
+tags:
+  - Repository
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: update_branch_metedata1
+      type: array
+      required:
+      - branch_id
+      - repo_id
+      - branch_name
+      - freeze_flag
+      - share_flag
+      items:
+        properties:
+          branch_id:
+            type: string
+            description: Branch Id
+          repo_id:
+            type: string
+            description: Repo Id
+          branch_name:
+            type: string
+            description: Branch Name
+          freeze_flag:
+            type: boolean
+            example: False
+            description: Branch Freeze Flag
+          share_flag:
+            type: boolean
+            example: False
+            description: Branch Share Flag
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

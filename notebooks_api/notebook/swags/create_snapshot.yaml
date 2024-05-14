@@ -1,0 +1,45 @@
+API to create a Snapshot DB Entry
+---
+tags:
+  - Snapshot
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: create_snapshot
+      type: object
+      required:
+      - input
+      - output
+      - docker_image
+      - repo_name
+      - branch
+      properties:
+        input:
+          type: string
+          description: Input Name of Snapshot
+        output:
+          type: string
+          description: Output Name of Snapshot
+        docker_image:
+          type: string
+          description:  ID of docker image
+        repo_name:
+          type: string
+          description: Repo Name
+        branch:
+          type: string
+          description: Repo Branch Name
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

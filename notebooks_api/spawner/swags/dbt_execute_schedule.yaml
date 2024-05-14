@@ -1,0 +1,46 @@
+API to execute a dbt_job/schedule
+---
+tags:
+  - dbt_scheduler
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: dbt_execute_schedule
+      type: object
+      required:
+        - env
+        - sensitiveInfo
+        - podName
+        - runConfiguration
+        - cloud_data_platform
+      properties:
+        env:
+          type: dict
+          description: Environment variables
+        sensitiveInfo:
+          type: dict
+          description: sensitive information
+        podName:
+          type: string
+          description: flowname_Job_instanceId
+        runConfiguration:
+          type: dict
+          description: run configuration details
+        cloud_data_platform:
+          type: string
+          description: Cloud data platform on which job is to be submitted
+        
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

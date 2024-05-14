@@ -1,0 +1,42 @@
+API to update user impersonation active directory user details
+---
+tags:
+  - User Impersonation
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: path
+    name: user_id
+    required: true
+    description: user details to be updated in user impersonation tables
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: update_user
+      type: object
+      required:
+        - user_name
+      properties:
+        user_name:
+          type: string
+          minLength: 1
+          description: User name
+responses:
+  200:
+    description: Success
+  204:
+    description: No Content Found
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

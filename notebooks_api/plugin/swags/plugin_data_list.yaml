@@ -1,0 +1,18 @@
+API to get plugin list data
+---
+tags:
+  - Custom Plugin
+parameters:
+  - in: path
+    name: section
+    description: section name
+    type: string
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

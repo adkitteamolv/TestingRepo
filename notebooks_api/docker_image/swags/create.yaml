@@ -1,0 +1,109 @@
+API to create a docker image
+---
+tags:
+  - docker image
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: body
+    name: body
+    schema:
+      id: create_docker_image
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ['PRE_BUILD','CUSTOM_BUILD', 'PRE_BUILD_SPCS', 'CUSTOM_BUILD_SPCS']
+          description: Type of docker image
+        icon:
+          type: string
+          description: Icon to be displayed
+        name:
+          type: string
+          description: Name of the docker image
+        description:
+          type: string
+          description: Description about the docker image
+        resource_id:
+          type: string
+          description: Selected resource id for the docker image
+        pip_packages:
+          type: string
+          description: List of python packages to be installed from pip index
+        conda_packages:
+          type: string
+          description: List of python packages to be installed from conda channel
+        base_image_id:
+          type: string
+          format: uuid
+          description: Base docker image to be used. If `docker_url` is present then this is not needed
+        docker_url:
+          type: string
+          description: Docker URL of the image. If `base_image_id` is present then this is not needed
+        docker_file:
+          type: string
+          description: Docker file from which the image has been created
+        tags:
+          type: array
+          items:
+            type: string
+        auto_commit:
+          type: integer
+          description: Options are 1 or 0
+        git_macros_config:
+          type: [array, "null"]
+          items:
+            type: object
+            properties:
+              repo_url:
+                type: string
+                description: Git Repo Url
+                example: https://github.com/mosaic.user/example.git
+              password:
+                type: string
+                description: password or access token
+                example: yRy6ythaqa_Ukd158-zx
+              branch:
+                type: string
+                example: master
+              output:
+                type: string
+                description: name of the folder, to be mounted inside docker container
+                example: shared_data
+              username:
+                type: string
+                description: git username
+                example: mosaic.user
+              id:
+                type: string
+                description: unique id for a macro in this list
+                example: 1001
+            required:
+              - repo_url
+              - password
+              - branch
+              - username
+              - id
+      required:
+        - type
+        - tags
+        - name
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,51 @@
+API to update the given notebook
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: notebook_id
+    in: path
+    required: true
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: update_notebook_v2
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the notebook
+        description:
+          type: string
+          description: Description about the notebook
+        resource_id:
+          type: string
+          description: UUID of the resource to be allocated
+        docker_image_id:
+          type: string
+          description: UUID of the docker image to be allocated
+        tags:
+          type: array
+          items:
+            type: string
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden

@@ -1,0 +1,24 @@
+API to authenticate user from ingress URL
+---
+tags:
+  - notebook
+parameters:
+  - in: path
+    name: pod_name
+    description: Pod Name
+    type: string
+    required: true
+  - in: path
+    name: user_id
+    description: User ID
+    type: string
+    required: true
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

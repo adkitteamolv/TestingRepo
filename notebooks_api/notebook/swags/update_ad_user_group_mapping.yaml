@@ -1,0 +1,45 @@
+API to update user impersonation active directory user group mappings
+---
+tags:
+  - User Impersonation
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: body
+    name: body
+    description: user-group mapping details to be updated in user impersonation tables
+    schema:
+      id: update_user_group_mapping
+      type: object
+      required:
+        - user_group_mapping
+      properties:
+        user_group_mapping:
+          type: object
+          properties:
+            user_id:
+              type: string
+              description: ad user id
+            group_id:
+              type: array
+              items:
+                type: string
+              description: ad group ids of a user
+responses:
+  200:
+    description: Success
+  204:
+    description: No Content Found
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,22 @@
+Endpoint to list the data files
+---
+tags:
+  - data files
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: query
+    name: folder_path
+    required: false
+    schema:
+      type: string
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

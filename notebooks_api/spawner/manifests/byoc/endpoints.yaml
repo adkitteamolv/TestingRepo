@@ -1,0 +1,11 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: {container_name}
+  namespace: {namespace}
+
+subsets:
+  - addresses:
+      - ip: {pods_internal_ip}
+    ports:
+      - port: {port_no}

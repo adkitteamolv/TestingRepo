@@ -1,0 +1,62 @@
+API to run snowsql query and fetch data from SPCS
+---
+tags:
+  - SPCS
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+    required: true
+  - in: header
+    name: X-Auth-Username
+    type: string
+    required: true
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: query
+    name: connection_id
+    schema:
+      type: string
+  - in: query
+    name: template_id
+    schema:
+      type: string
+  - in: query
+    name: query
+    required: true
+    schema:
+      type: string
+    enum:
+      - get_uri
+      - list_compute_pool
+      - list_database
+      - list_schema
+      - list_stage
+  - in: query
+    name: pool_type
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: database
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: schema
+    required: false
+    schema:
+      type: string
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

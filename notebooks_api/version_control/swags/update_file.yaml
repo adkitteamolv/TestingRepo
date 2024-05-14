@@ -1,0 +1,56 @@
+API to update file / restore commit
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - name: file_path
+    in: path
+    type: string
+    description: Path of the File
+    required: true
+  - name: file_content
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+      - file_content
+      properties:
+        file_content:
+          type: object
+          description: raw contents recieved from read_file api
+        commit_message:
+          type: string
+          description: git commit message
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

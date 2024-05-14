@@ -1,0 +1,57 @@
+API to execute a job/schedule using notebook
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: query
+    name: async
+    required: true
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: execute_notebook
+      type: object
+      required:
+        - file_path
+        - execution_command
+        - docker_image_id
+        - resource_id
+        - project_id
+      properties:
+        file_path:
+          type: string
+          description: Path of the notebook
+        execution_command:
+          type: string
+          description: Command that will be used for executing the notebook
+        resource_id:
+          type: string
+          description: UUID of the resource that needs to be allocated
+        docker_image_id:
+          type: string
+          description: UUID of the docker image that needs to be used
+        project_id:
+          type: string
+          description: UUID of the project
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

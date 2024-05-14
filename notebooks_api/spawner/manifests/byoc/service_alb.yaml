@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {container_name}
+  namespace: {namespace}
+spec:
+  selector:
+    app: {container_name}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: {port_no}
+  type: {service_type}

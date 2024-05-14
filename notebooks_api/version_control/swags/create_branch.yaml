@@ -1,0 +1,58 @@
+API to create branch in a repo
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: header
+    name: X-Repo-Id
+    type: string
+  - in: header
+    name: Enabled-Repo
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: create_git_branch
+      type: object
+      required:
+        - branch
+        - parent_branch
+        - default_branch_flag
+      properties:
+        branch:
+          type: string
+          description: Branch Name
+        parent_branch:
+          type: string
+          description: Parent Branch Name
+        default_branch_flag:
+          type: string
+          description: This is a default Branch creation flag with true/false value to initilize an empty repository
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

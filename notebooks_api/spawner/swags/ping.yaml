@@ -1,0 +1,13 @@
+API to check health of the service
+---
+tags:
+  - scheduler
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

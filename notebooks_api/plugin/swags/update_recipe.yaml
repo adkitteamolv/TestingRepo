@@ -1,0 +1,19 @@
+API to update recipe code
+---
+tags:
+  - Custom Plugin
+consumes:
+  - multipart/form-data
+parameters:
+  - in: query
+    name: destination_path
+    required: false
+    schema:
+      type: string
+  - in: formData
+    name: zip_file
+    type: file
+    required: false
+responses:
+  "200":
+    description: OK

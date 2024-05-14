@@ -1,0 +1,75 @@
+API to add user impersonation active directory data
+---
+tags:
+  - User Impersonation
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: body
+    name: body
+    description: user details to be added in user impersonation tables
+    schema:
+      id: add_user_impersonation_details
+      type: object
+      required:
+        - user_detail
+        - group_detail
+        - user_group_mapping
+      properties:
+        user_detail:
+          type: array
+          items:
+            type: object
+            properties:
+              user_name:
+                type: string
+                description: ad user name
+              user_id:
+                type: string
+                description: ad user id
+              mosaic_user_id:
+                type: string
+                description: mosaic user id
+          description: User details
+        group_detail:
+          type: array
+          items:
+            type: object
+            properties:
+              group_name:
+                type: string
+                description: ad group name
+              group_id:
+                type: string
+                description: ad group id
+          description: Group details
+        user_group_mapping:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                type: string
+                description: ad user id
+              group_id:
+                type: array
+                items:
+                  type: string
+                description: ad group ids of a user
+          description: Group details
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

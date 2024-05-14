@@ -1,0 +1,40 @@
+API to fetch commands for a docker image
+---
+tags:
+  - docker image
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: docker_image_id
+    in: path
+    required: true
+  - in: body
+    name: body
+    schema:
+      id: fetch_docker_commands
+      type: object
+      properties:
+        file_path:
+          type: string
+          description: File path of notebook to be scheduled
+      required:
+        - file_path
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

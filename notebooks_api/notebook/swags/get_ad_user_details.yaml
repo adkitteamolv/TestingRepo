@@ -1,0 +1,28 @@
+API to get user impersonation active directory data
+---
+tags:
+  - User Impersonation
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: path
+    name: mosaic_user_id
+    description: mosaic user id for which you want to fetch ad details
+    type: string
+    required: False
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

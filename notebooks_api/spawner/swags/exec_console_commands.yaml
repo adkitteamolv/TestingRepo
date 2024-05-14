@@ -1,0 +1,37 @@
+API to execute an command in console of pod
+---
+tags:
+  - ConsoleCommand
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: pod_name
+    in: path
+    type: string
+    required: true
+    description: pod_name
+  - name: container_name
+    in: query
+    type: string
+    required: true
+    description: container_name
+  - name: body
+    in: body
+    required: true
+    schema:
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          description: command to be executed inside pod
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

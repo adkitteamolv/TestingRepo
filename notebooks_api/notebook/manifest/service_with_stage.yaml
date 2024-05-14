@@ -1,0 +1,18 @@
+spec:
+  container:
+  - name: notebooks
+    image: {image}
+    volumeMounts:
+      - name: stagemount
+        mountPath: /data
+    env:
+      key: value
+  endpoint:
+  - name: echoendpoint
+    port: 8888
+    public: true
+  volumes:
+  - name: stagemount
+    source: "@{stage}"
+    uid: 1000
+    gid: 1000

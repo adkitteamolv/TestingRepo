@@ -1,0 +1,37 @@
+Endpoint to fetch folder structure from git
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: project
+    in: path
+    type: string
+    required: true
+    description: name of the project
+  - name: project_id
+    in: path
+    type: string
+    required: true
+    description: id of the project
+  - name: path
+    in: path
+    type: string
+    required: false
+    description: Path to be fetched
+responses:
+  200:
+    description: success
+  401:
+    description: Forbidden

@@ -1,0 +1,20 @@
+API to file html format of notebook/py file
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: file_path
+    in: path
+    required: true
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

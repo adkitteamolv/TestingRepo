@@ -1,0 +1,23 @@
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {container_name}
+  namespace: {namespace}
+  annotations:
+    'kubernetes.io/ingress.class': {ingress_class}
+    'nginx.ingress.kubernetes.io/auth-url': {ingress_auth_url}
+    'nginx.ingress.kubernetes.io/auth-snippet': |
+      {ingress_auth_snippet}
+    'nginx.ingress.kubernetes.io/auth-signin': {ingress_auth_fail_url}
+spec:
+ rules:
+ - host: {default_host}
+   http:
+     paths:
+     - path: {ingress_url}
+       pathType: {pathType}
+       backend:
+         service:
+           name: {container_name}
+           port:
+             number: 80

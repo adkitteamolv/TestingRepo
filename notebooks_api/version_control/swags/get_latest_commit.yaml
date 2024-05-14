@@ -1,0 +1,21 @@
+API to get latest commit for the supplied project id in header
+---
+tags:
+  - Version Control System
+parameters:
+  - name: X-Project-Id
+    in: header
+    type: string
+    required: true
+    description: id of project
+responses:
+  200:
+    description: Success
+  204:
+    description: No Content
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

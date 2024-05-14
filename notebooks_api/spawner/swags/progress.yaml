@@ -1,0 +1,29 @@
+API to to fetch pod progress
+---
+tags:
+  - BYOC
+parameters:
+  - name: pod_name
+    in: path
+    type: string
+    required: true
+    description: Name of Pod
+  - name: port_no
+    in: query
+    type: string
+    required: true
+    description: port no
+  - name: ingress_url
+    in: query
+    type: string
+    required: true
+    description: ingress url of pod
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

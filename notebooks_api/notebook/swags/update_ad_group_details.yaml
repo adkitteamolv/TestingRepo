@@ -1,0 +1,42 @@
+API to update user impersonation active directory group details
+---
+tags:
+  - User Impersonation
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: path
+    name: group_id
+    required: true
+    description: group details to be updated in user impersonation tables
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: update_group
+      type: object
+      required:
+        - group_name
+      properties:
+        group_name:
+          type: string
+          minLength: 1
+          description: Group name
+responses:
+  200:
+    description: Success
+  204:
+    description: No Content Found
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

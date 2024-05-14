@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-endpoints-{template_id}
+  namespace:  {namespace}
+spec:
+  selector:
+    app: {container_name}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 4000

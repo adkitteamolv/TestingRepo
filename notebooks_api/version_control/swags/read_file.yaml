@@ -1,0 +1,55 @@
+API to read file
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - name: file_path
+    in: path
+    type: string
+    description: Path of the File in base64 encoded format
+  - name: branch
+    in: path
+    type: string
+    description: name of branch/ commit_id
+    required: true
+    description: Path of the File
+  - name: branch
+    in: path
+    type: string
+    description: name of branch
+  - name: raw_content
+    in: query
+    type: string
+    description: value can be true or false ,if true git raw contents are returned
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

@@ -1,0 +1,39 @@
+API to get git file url
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - name: branch
+    in: path
+    type: string
+    description: name of branch
+  - name: file_path
+    in: path
+    type: string
+    description: Path of the File
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

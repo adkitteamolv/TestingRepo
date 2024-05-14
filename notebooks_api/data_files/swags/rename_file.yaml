@@ -1,0 +1,27 @@
+API to rename file
+---
+tags:
+  - data files
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: query
+    name: old_filename
+    required: true
+    schema:
+      type: string
+  - in: query
+    name: new_filename
+    required: true
+    schema:
+      type: string
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,43 @@
+API to Upload flow json to repo
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - in: formData
+    name: flow
+    type: file
+    required: true
+    description: The flow json to be uploaded
+
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

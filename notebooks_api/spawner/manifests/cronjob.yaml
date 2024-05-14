@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {jobName}
+  namespace: {namespace}
+spec:
+  timeZone: {timeZone}
+  schedule: "{cronSchedule}"
+  concurrencyPolicy: {concurrencyPolicy}
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          containers:
+          - name: {jobName}
+            image: {image}
+            imagePullPolicy: Always
+            command: {command}
+            env: {envVar}
+          imagePullSecrets:
+          - name: {image_pull_secret}
+          restartPolicy: Never

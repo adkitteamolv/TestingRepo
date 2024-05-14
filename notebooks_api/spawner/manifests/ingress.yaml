@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jupyter-endpoints-{template_id}
+  namespace: {namespace}
+  annotations:
+    'kubernetes.io/ingress.class': {ingress_class}
+spec:
+ rules:
+ - host: {host}
+   http:
+     paths:
+     - path: /sidecar/api/v1/{pod_name}/
+       pathType: {pathType}
+       backend:
+         service:
+           name: jupyter-endpoints-{template_id}
+           port:
+             number: 80

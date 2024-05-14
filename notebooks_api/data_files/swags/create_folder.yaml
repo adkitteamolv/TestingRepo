@@ -1,0 +1,22 @@
+API to create folder
+---
+tags:
+  - data files
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: query
+    name: folder_name
+    required: true
+    schema:
+      type: string
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,34 @@
+Endpoint to copy data files
+---
+tags:
+  - data files
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: path_json
+    in: body
+    required: true
+    schema:
+      id: paths
+      type: object
+      required:
+        - source_files
+        - destination_path
+      properties:
+        destination_path:
+          type: string
+          description: Destination path for copying file
+        source_files:
+          type: array
+          items:
+            type: string
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

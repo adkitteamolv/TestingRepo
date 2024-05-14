@@ -1,0 +1,24 @@
+API to get plugin data using custom_plugin_id
+---
+tags:
+  - Custom Plugin
+parameters:
+  - name: custom_plugin_id
+    in: path
+    type: string
+    required: true
+    description: id from cp_plugin_settings table
+  - name: plugin_id
+    in: path
+    type: string
+    required: true
+    description: id from cp_plugins table
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

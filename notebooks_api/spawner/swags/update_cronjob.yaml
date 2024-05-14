@@ -1,0 +1,46 @@
+API to update cron expression and environment variables for existing kubernetes cronjob
+---
+tags:
+  - Cronjob
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - jobName
+        - cronExpression
+        - envVar
+      properties:
+        jobName:
+          type: string
+          description: name of schedule
+        cronExpression:
+          type: string
+          description: cron expression
+        envVar:
+          type: object
+          description: environment variables
+
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,39 @@
+Endpoint to list the docker images
+---
+tags:
+  - docker image
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: query
+    name: type
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: kernel_type
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: project
+    required: true
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

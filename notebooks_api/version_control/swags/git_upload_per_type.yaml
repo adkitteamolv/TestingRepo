@@ -1,0 +1,54 @@
+API to upload on git
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - name: entity_type
+    in: path
+    type: string
+    required: true
+    description: Type of entity like Notebook, Workflow
+  - name: data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+      - temp_dir
+      properties:
+        temp_dir:
+          type: string
+          description: temporary directory
+
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

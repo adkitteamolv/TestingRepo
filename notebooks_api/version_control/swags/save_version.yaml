@@ -1,0 +1,49 @@
+This API will create a new version for the specified component in VCS.
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+      - data
+      - commit_message
+      properties:
+        data:
+          type: object
+          description: Component data
+        commit_message:
+          type: string
+          description: Commit message data
+        component_id:
+          type: string
+          description: Component ID
+        component_type:
+          type: string
+          description: Component Type
+responses:
+  201:
+    description: Success
+    schema:
+      $ref: "#/definitions/VersionResponse"
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+definitions:
+  VersionResponse:
+    description: Save version result
+    type: object
+    required:
+      - version_number
+    properties:
+      version_number:
+        type: string

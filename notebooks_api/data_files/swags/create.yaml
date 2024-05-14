@@ -1,0 +1,48 @@
+Endpoint to upload the data files
+---
+tags:
+  - data files
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: formData
+    name: datafile
+    type: file
+    required: true
+  - in: formData
+    name: eof
+    type: boolean
+    required: true
+  - in: formData
+    name: file_unique
+    type: string
+    required: true
+  - in: formData
+    name: file_content_type
+    type: string
+    required: true
+  - in: query
+    name: destination_path
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: overwrite
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: total_size
+    required: true
+    schema:
+      type: float
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

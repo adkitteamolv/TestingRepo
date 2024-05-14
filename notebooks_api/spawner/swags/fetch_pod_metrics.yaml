@@ -1,0 +1,49 @@
+API to to fetch CPU and memory utilization
+---
+tags:
+  - BYOC
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+    required: true
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: pod_name
+    in: path
+    type: string
+    required: true
+    description: Pod Name
+  - in: query
+    name: step
+    type: number
+    description: PromQL step
+  - in: query
+    name: start
+    type: number
+    description: PromQL start timestamp
+  - in: query
+    name: end
+    type: number
+    description: PromQL end timestamp
+  - in: query
+    name: time_series_data
+    type: string
+    description: Boolean Specifying Time Series Data
+
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

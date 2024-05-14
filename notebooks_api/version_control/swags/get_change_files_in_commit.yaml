@@ -1,0 +1,32 @@
+API to get file changed for given project_id in header & commit_id in path
+---
+tags:
+  - Version Control System
+parameters:
+  - name: X-Project-Id
+    in: header
+    type: string
+    required: true
+    description: id of project
+  - name: commit_id
+    in: path
+    type: string
+    required: true
+    description: commit_id
+responses:
+  200:
+    description: Success
+  204:
+    description: No Content
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

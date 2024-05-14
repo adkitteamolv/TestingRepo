@@ -1,0 +1,34 @@
+<html>
+<style>
+*{
+  font-family: Inter, Lato, sans-serif !important;
+  border-collapse: collapse;
+}
+
+table{
+ table-layout: auto;
+ min-width: 100%;
+ }
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+thead tr th {
+  position:sticky;
+  top:0;
+}
+
+tr:nth-child(even){background-color: #f2f2f2;}
+
+tr:hover {background-color: #ddd;}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #f2f2f2;
+}
+</style>
+<body>

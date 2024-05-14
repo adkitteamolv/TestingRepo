@@ -1,0 +1,78 @@
+API to execute a Job
+---
+tags:
+  - Execute Job
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: execute_job
+      type: object
+      required:
+        - docker_url
+        - cpu
+        - memory
+        - resource_extra
+        - execution_command
+        - init_command
+        - node_affinity_options
+        - subscriber_info
+        - job_name
+        - instance_id
+        - env
+        - resource_quota_full
+        - base_path
+        - plugin_id
+      properties:
+        docker_url:
+          type: string
+          description: Image used in container
+        cpu:
+          type: string
+          description: Cpu limit in container
+        memory:
+          type: string
+          description: Memory limit in container
+        resource_extra:
+          type: string
+          description: Type of computing unit, cpu/gpu
+        execution_command:
+          type: string
+          description: Execution command for container
+        init_command:
+          type: string
+          description: Init command for container
+        node_affinity_options:
+          type: string
+          description: node affinity option
+        subscriber_info:
+          type: string
+          description: subscriber info
+        job_name:
+          type: string
+          description: job name
+        instance_id:
+          type: string
+          description: instance id generated from monitor
+        env:
+          type: string
+          description: env variables to be initialised in container
+        resource_quota_full:
+          type: string
+          description: Whether used is resource quota left in current project
+        base_path:
+          type: string
+          description: base path for plugin execution, used for workdir and logdir creation.
+        plugin_id:
+          type: string
+          description: plugin id
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

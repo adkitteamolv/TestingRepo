@@ -1,0 +1,56 @@
+API to create a notebook
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: create_notebook
+      type: object
+      required:
+      - tags
+      - docker_image_id
+      - path
+      properties:
+        name:
+          type: string
+          description: Name of the notebook
+        description:
+          type: string
+          description: Description about the notebook
+        resource_id:
+          type: string
+          description: UUID of the resource that needs to be allocated
+        docker_image_id:
+          type: string
+          description: UUID of the docker image that needs to be used
+        path:
+          type: string
+          description: Path of the repo where notebook needs to be created
+        tags:
+          type: array
+          items:
+            type: string
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

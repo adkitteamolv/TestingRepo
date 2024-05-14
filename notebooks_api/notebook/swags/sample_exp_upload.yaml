@@ -1,0 +1,44 @@
+API to pick/create sample experiment notebook and upload it on repo.
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: sample_exp_upload
+      type: object
+      required:
+        - project_id
+        - experiment_name
+        - experiment_algorithm
+      properties:
+        project_id:
+          type: string
+          description: project_id
+        experiment_name:
+          type: string
+          description: experiment name
+        experiment_algorithm:
+          type: string
+          description: algorithm to be used in experiment
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden

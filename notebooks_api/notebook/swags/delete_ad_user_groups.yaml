@@ -1,0 +1,54 @@
+API to delete user/groups from user impersonation data tables
+---
+tags:
+  - User Impersonation
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: body
+    name: body
+    description: user details to be deleted from user impersonation tables
+    schema:
+      id: delete_user_impersonation_data
+      type: object
+      properties:
+        user_ids:
+          type: array
+          items:
+            type: string
+          description: User ids
+        group_ids:
+          type: array
+          items:
+            type: string
+          description: Group ids
+        user_group_mapping:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                type: string
+                description: ad user id
+              group_id:
+                type: array
+                items:
+                  type: string
+                description: ad group ids of a user
+          description: Group details
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

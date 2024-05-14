@@ -1,0 +1,32 @@
+API to to get pod name
+---
+tags:
+  - Notebook Run
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+    required: true
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: id
+    in: path
+    type: string
+    required: true
+    description: Name of Container
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,50 @@
+API to delete KYD Checkpoint jobs
+---
+tags:
+  - know-your-data
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: model_id
+    in: path
+    type: string
+    required: true
+    description: Model Id of the model
+  - name: version_id
+    in: path
+    type: string
+    required: true
+    description: Version Id of the model
+  - name: job_name
+    in: query
+    type: string
+    required: true
+    description: job_name
+  - name: cron
+    in: query
+    type: string
+    required: true
+    description: true or false
+    default: false
+  - name: grace_period
+    in: query
+    type: integer
+    required: true
+    description: grace period
+    default: 5
+  - name: propagation_policy
+    in: query
+    type: string
+    required: true
+    description: Foreground, Background, Orphan. 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
+    default: Foreground
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

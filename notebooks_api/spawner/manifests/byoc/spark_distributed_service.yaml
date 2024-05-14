@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {container_name}
+  namespace: {namespace}
+spec:
+  selector:
+    app: {container_name}
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: {port_no}
+  - name: blockmanager
+    port: 7777
+    protocol: TCP
+  - name: driver
+    port: 2222
+    protocol: TCP

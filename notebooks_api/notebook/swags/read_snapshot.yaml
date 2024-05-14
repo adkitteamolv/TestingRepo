@@ -1,0 +1,23 @@
+Endpoint to read the snapshot files
+---
+tags:
+  - Snapshot
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: snapshot_id
+    in: path
+    schema:
+      type: string
+      format: uuid
+    required: true
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

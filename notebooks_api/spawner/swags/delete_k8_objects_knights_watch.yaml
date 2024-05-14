@@ -1,0 +1,20 @@
+API to delete k8 object required in knights-watch
+---
+tags:
+  - knights-watch
+parameters:
+  - name: template_id
+    in: path
+    type: string
+    required: true
+    description: template_id
+
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

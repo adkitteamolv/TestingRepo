@@ -1,0 +1,44 @@
+Endpoint to preview the data files
+---
+tags:
+  - data files
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: file_type
+    in: path
+    schema:
+      type: string
+  - name: sub_type
+    in: path
+    schema:
+      type: string
+  - name: dataset_name
+    in: path
+    schema:
+      type: string
+  - in: query
+    name: folder_structure
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: row_count
+    required: false
+    schema:
+      type: integer
+  - in: query
+    name: volume_path
+    required: false
+    schema:
+      type: string
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

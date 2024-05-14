@@ -1,0 +1,82 @@
+API to create Know Your Data checkpoint job
+---
+tags:
+  - know-your-data
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: model_id
+    in: path
+    type: string
+    required: true
+    description: Model Id of the model
+  - name: version_id
+    in: path
+    type: string
+    required: true
+    description: Version Id of the model
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - past_weeks
+        - image_to_use
+        - cpu
+        - memory
+        - to_execute
+        - job_prefix
+        - container_name
+        - custom_env
+        - job_frequency
+        - fetch_params_from_db
+        - init_script
+      properties:
+        past_weeks:
+          type: string
+          description: Number of past weeks production data to use
+          default: "4"
+        image_to_use:
+          type: string
+          description: Image to use for the job
+        to_execute:
+          type: object
+          description: Script to execute
+        job_prefix:
+          type: string
+          description: Job Name Prefix
+        container_name:
+          type: string
+          description: Name to put for container
+        custom_env:
+          type: object
+          description: custom env k,v pair
+        cpu:
+          type: string
+          description: Number of CPU Required
+          default: "2"
+        memory:
+          type: string
+          description: Amount of Memory Required (Gi)
+          default: "4Gi"
+        job_frequency:
+          type: string
+          description: Number of times to execute on_demand, hourly, daily, weekly, monthly, yearly, cron expression
+          default: "on_demand"
+        fetch_params_from_db:
+          type: boolean
+        init_script:
+          type: string
+          description: init_script to be run before entry.sh file for explanable ai
+          default: ""
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

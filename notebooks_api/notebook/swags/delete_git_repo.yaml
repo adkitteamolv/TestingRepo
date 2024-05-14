@@ -1,0 +1,22 @@
+API to delete git Repository
+---
+tags:
+  - Repository
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: path
+    name: repo_id
+    description: UUID of the repository
+    type: string
+    required: true
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

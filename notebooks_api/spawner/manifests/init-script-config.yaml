@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {name}
+  namespace: {namespace}
+  labels:
+    {labels}
+data:
+  init-script.sh: |-
+    printf {script} > /tmp/execute-init.sh
+    sed "s/^[ \t]*//" -i /tmp/execute-init.sh
+    grep -i pip /tmp/execute-init.sh > /tmp/pip_packages.sh
+    grep -v pip /tmp/execute-init.sh > /tmp/other_commands.sh
+    head -1 /tmp/pip_packages.sh > /tmp/temp.txt
+    var_temp=$(cut -d " " -f 5 /tmp/temp.txt)
+    pip freeze > /tmp/serving-packages.sh
+    while IFS= read -r line;do
+    if [ -z "$var_temp" ]; then
+        echo "pip install --user $line" >> /tmp/serving-updated.sh
+    else
+        echo "pip install --user -i $var_temp $line" >> /tmp/serving-updated.sh
+    fi
+    done < "/tmp/serving-packages.sh"
+    sort -o /tmp/pip_packages.sh /tmp/pip_packages.sh
+    sort -o /tmp/serving-updated.sh /tmp/serving-updated.sh
+    rm /tmp/serving-packages.sh
+    rm /tmp/temp.txt
+    comm -13 /tmp/serving-updated.sh /tmp/pip_packages.sh > /tmp/install-package.sh
+    sh /tmp/install-package.sh
+    sh /tmp/other_commands.sh

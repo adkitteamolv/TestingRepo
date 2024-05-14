@@ -1,0 +1,31 @@
+API to remove active branch on owner role removal from project
+---
+tags:
+  - Repository
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: delete_active_branch
+      type: object
+      required:
+      - project_id
+      - username
+      properties:
+        project_id:
+          type: string
+          description: project_id from which user owner access has been revoked
+        username:
+          type: string
+          description: username whose owner access has been revoked
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  404:
+    description: Not Found
+

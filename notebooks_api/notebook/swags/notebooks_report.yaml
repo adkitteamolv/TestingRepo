@@ -1,0 +1,33 @@
+API to export model from UI
+---
+tags:
+  - Notebooks Report
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: body
+    name: data
+    schema:
+      $ref: '#/definitions/ModelExportRequest'
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+definitions:
+  ModelExportRequest:
+    required:
+      - from_date
+      - to_date
+    properties:
+      from_date:
+        type: string
+        example: "2021-07-29"
+      to_date:
+        type: string
+        example: "2021-07-29"

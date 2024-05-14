@@ -1,0 +1,17 @@
+API to list the reposotories
+---
+tags:
+  - Repository
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

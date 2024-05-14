@@ -1,0 +1,51 @@
+API to create a resource
+---
+tags:
+  - resource
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: body
+    name: body
+    schema:
+      id: create_resource
+      type: object
+      required:
+        - name
+        - cpu
+        - mem
+      properties:
+        name:
+          type: string
+          description: Name of the resource
+        description:
+          type: string
+          description: Description about the resource
+        cpu:
+          type: string
+          description: Amount of CPU
+        mem:
+          type: string
+          description: Amount of memory
+        extra:
+          type: string
+          description: Extra resources like GPU
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,49 @@
+API to Get get_job_pod_for_run_history_and_update
+---
+tags:
+  - K8_JOBS
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: job_name
+    in: path
+    type: string
+    required: true
+    description: job_name
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - id
+        - model_id
+        - version_id
+      properties:
+        id:
+          type: string
+          description: Run history id
+        model_id:
+          type: string
+        version_id:
+          type: string    
+        
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

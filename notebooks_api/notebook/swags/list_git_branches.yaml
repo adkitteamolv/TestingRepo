@@ -1,0 +1,47 @@
+API to fetch active list of git Branches
+---
+tags:
+  - Repository
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: list_git_branches
+      type: object
+      required:
+      - repo_url
+      - repo_name
+      - branch
+      - username
+      - password
+      properties:
+        repo_url:
+          type: string
+          description: Repository url
+        username:
+          type: string
+          description: username for repository
+        password:
+          type: string
+          description: password for repository
+        repo_type:
+          type: string
+          enum: [Github, Gitlab, Bitbucket]
+          description: repository type can be
+        access_category:
+          type: string
+          enum: [PUBLIC, PRIVATE]
+          description: access_category can be PUBLIC or PRIVATE
+        secure_flag:
+          type: string
+          description: password should be encoded using base64 encoding if secure_flag is true
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

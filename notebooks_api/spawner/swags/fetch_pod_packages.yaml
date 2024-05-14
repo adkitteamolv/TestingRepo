@@ -1,0 +1,42 @@
+API to to fetch packages in a pod
+---
+tags:
+  - Package-Retrieval
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: pod_name
+    in: path
+    type: string
+    required: true
+    description: Name of Pod From which logs needs to be retrieved
+  - name: container_name
+    in: path
+    type: string
+    required: true
+    description: The container for which to retrieve package.
+  - name: kernel_type
+    in: query
+    type: string
+    required: false
+    description: The kernel type for which to retrieve package.
+    allowEmptyValue: true
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

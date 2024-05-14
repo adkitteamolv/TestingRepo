@@ -1,0 +1,35 @@
+API to get commits for the supplied project id in header
+---
+tags:
+  - Version Control System
+parameters:
+  - name: X-Project-Id
+    in: header
+    type: string
+    required: true
+    description: id of project
+  - name: per_page
+    in: query
+    type: string
+    description: value can be true or false ,if true all commits are returned else top 20 commits are returned
+  - name: page_no
+    in: query
+    type: string
+    description: page number of commits / if set to "all", all the commits will be fetched
+responses:
+  200:
+    description: Success
+  204:
+    description: No Content
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

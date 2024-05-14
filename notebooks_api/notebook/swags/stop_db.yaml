@@ -1,0 +1,28 @@
+Endpoint to update db entry on jy pod delete
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: template_id
+    in: path
+    schema:
+      type: string
+      format: uuid
+    required: true
+responses:
+  204:
+    description: success
+  401:
+    description: Forbidden

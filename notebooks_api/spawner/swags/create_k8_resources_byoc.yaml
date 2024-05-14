@@ -1,0 +1,72 @@
+API to create k8 object required in byoc
+---
+tags:
+  - BYOC # container_name, docker_image_name, port_no, requests, cmd, args, env
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - pod_name
+        - docker_url
+        - port
+        - pod_request_resource
+        - cmd
+        - argument
+        - env
+        - ingress_url
+      properties:
+        pod_name:
+          type: string
+          description: container name
+        docker_url:
+          type: string
+          description: docker image url
+        port:
+          type: integer
+          description: port no
+        pod_request_resource:
+          type: object
+          properties:
+            cpu:
+              type: string
+            memory:
+              type: string
+        cmd:
+          type: array
+          items:
+            type: string
+        argument:
+          type: array
+          items:
+            type: string
+        env:
+          type: object
+        git_macros_config:
+          type: object
+          properties:
+            repo_url:
+              type: string
+            password:
+              type: string
+            branch:
+              type: string
+            output:
+              type: string
+            username:
+              type: string
+
+
+
+
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,3 @@
+{
+"project_id": "{'NODE_AFFINITY_REQUIRED_KEY': 'req_key', 'NODE_AFFINITY_REQUIRED_VALUES': 'req_val', 'NODE_AFFINITY_REQUIRED_OPERATOR': 'req_operator', 'TOLERATIONS_KEY': 'tol_key', 'TOLERATIONS_VALUE': 'tol_val', 'TOLERATIONS_OPERATOR': 'tol_operator', 'TOLERATIONS_EFFECT': 'tol_effect'}"
+}

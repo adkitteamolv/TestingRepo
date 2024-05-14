@@ -1,0 +1,55 @@
+API to execute a job/schedule
+---
+tags:
+  - Notebook Run
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: execute_schedule
+      type: object
+      required:
+        - notebook_id
+        - notebook_name
+        - pip_packages
+        - repo_name
+        - job_instanceid
+      properties:
+        notebook_id:
+          type: string
+          description: Notebook ID
+        notebook_name:
+          type: string
+          description: Notebook name
+        pip_packages:
+          type: string
+          description: Names of the pip packages to be installed
+        repo_name:
+          type: string
+          description: Name of the repo
+        job_instanceid:
+          type: string
+          description: Id of Job Instance
+        git_macros_config:
+          type: object
+          properties:
+            repo_url:
+              type: string
+            password:
+              type: string
+            branch:
+              type: string
+            output:
+              type: string
+            username:
+              type: string
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

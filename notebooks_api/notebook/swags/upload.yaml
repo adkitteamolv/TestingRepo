@@ -1,0 +1,50 @@
+API to upload a notebook
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: formData
+    name: tar_file
+    type: file
+    description: The file or folder to upload
+  - in: formData
+    name: name
+    type: string
+    description: Name of the file or folder
+  - in: formData
+    name: description
+    type: string
+    description: Description about the file or folder
+  - in: formData
+    name: docker_image_id
+    type: string
+    description: UUID of the docker image that needs to be used in case of .ipynb file
+  - in: formData
+    name: tags
+    type: list
+    description: Tag
+  - in: formData
+    name: temp_dir
+    type: string
+    description: Path of file in case of duplicate file or folder
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

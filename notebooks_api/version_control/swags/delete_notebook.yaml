@@ -1,0 +1,62 @@
+API to delete notebook
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: repo
+    in: path
+    type: string
+    required: true
+    description: Name of Repo
+  - name: path
+    in: path
+    type: string
+    required: false
+    description: Path of the file/folder
+  - name: data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+      - name
+      - isFolder
+      properties:
+        name:
+          type: string
+          description: Name of the notebook
+        isFolder:
+          type: boolean
+          description: whether it's a file/ folder
+        commit_message:
+          type: boolean
+          description: git commit message
+
+
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
+
+
+
+
+
+

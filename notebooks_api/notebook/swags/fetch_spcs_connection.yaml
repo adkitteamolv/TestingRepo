@@ -1,0 +1,28 @@
+API to fetch snowflake connections list created by user
+---
+tags:
+  - SPCS
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+    required: true
+  - in: header
+    name: X-Auth-Username
+    type: string
+    required: true
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+responses:
+  204:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

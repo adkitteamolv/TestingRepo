@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: jupyter-endpoints-{template_id}
+  namespace: {namespace}
+
+subsets:
+  - addresses:
+      - ip: {pods_internal_ip}
+    ports:
+      - port: 4000

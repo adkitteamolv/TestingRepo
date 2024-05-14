@@ -1,0 +1,41 @@
+API to check repository clone access
+---
+tags:
+  - Version Control System
+parameters:
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: clone_credentials
+      type: object
+      required:
+      - repo_url
+      - branch
+      - password
+      - username
+      properties:
+        repo_url:
+          type: string
+          description: Repository url
+        username:
+          type: string
+          description: username for repository
+        password:
+          type: string
+          description: password for repository
+        branch:
+          type: string
+          description: Name of branch
+responses:
+  200:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

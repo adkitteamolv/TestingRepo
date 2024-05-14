@@ -1,0 +1,27 @@
+Endpoint to read a resource by id
+---
+tags:
+  - resource
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: path
+    name: resource_id
+    description: UUID of the resource
+    type: string
+    required: true
+responses:
+  204:
+    description: success
+  401:
+    description: Forbidden

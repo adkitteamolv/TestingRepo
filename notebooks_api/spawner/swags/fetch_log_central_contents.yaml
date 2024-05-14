@@ -1,0 +1,67 @@
+API to to fetch streaming log contents from pod.
+---
+tags:
+  - Log-Central
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: pod_name
+    in: path
+    type: string
+    required: true
+    description: Name of Pod From which logs needs to be retrieved
+  - name: container_name
+    in: path
+    type: string
+    required: true
+    description: The container for which to stream logs.
+  - name: tail_lines
+    in: query
+    type: integer
+    required: false
+    default: 1
+    description: If set, the number of lines from the end of the logs to show. If not specified, logs are shown from the creation of the container or sinceSeconds or sinceTime
+  - name: stream
+    in: query
+    type: boolean
+    required: false
+    description: Follow the log stream of the pod. Defaults to false.
+    default: "false"
+    allowEmptyValue: true
+  - name: previous
+    in: query
+    type: boolean
+    required: false
+    default: "false"
+    description: Return previous terminated container logs. Defaults to false.
+    allowEmptyValue: true
+  - name: since_seconds
+    in: query
+    type: integer
+    required: false
+    description: Relative time in seconds before the current time from which to show logs. If this value precedes the time a pod was started, only logs since the pod start will be returned. If this value is in the future, no logs will be returned. Only one of sinceSeconds or sinceTime may be specified.
+  - name: testing
+    in: query
+    type: boolean
+    required: false
+    default: "true"
+    description: Will return true to check ping. Defaults to True.
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

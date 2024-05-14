@@ -1,0 +1,34 @@
+API to save plugin user data
+---
+tags:
+  - Custom Plugin
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - in: body
+    name: body
+    schema:
+      id: add_plugin_data
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the plugin
+        description:
+          type: string
+          description: description of the plugin
+      required:
+        - name
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad Request
+  401:
+    description: Forbidden
+  500:
+    description: Error

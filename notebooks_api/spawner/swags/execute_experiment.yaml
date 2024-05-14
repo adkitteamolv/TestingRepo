@@ -1,0 +1,111 @@
+API to execute an experiment
+---
+tags:
+  - Notebook Run
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: execute_experiment
+      type: object
+      required:
+        - EXPERIMENT_ID
+        - EXPERIMENT_TYPE
+        - DATA_SOURCE_NAME
+        - FEATURE_COLS
+        - TARGET_COL
+        - CONNECTOR_UID
+        - CONNECTOR_BASE_URL
+        - CONNECTOR_PYTHON_HOST
+        - CONNECTOR_PYTHON_PORT
+        - READABILITY
+        - ACCURACY
+        - TIME
+        - USE_CATALOG
+        - SOCKET_URL
+        - SOCKET_RESOURCE
+        - PROJECT_ID
+        - CV
+        - PRE_PROCESSORS
+        - SCORING
+        - CPU_REQUEST
+        - RAM_REQUEST
+        - CPU_LIMIT
+        - RAM_LIMIT
+      properties:
+        EXPERIMENT_ID:
+          type: string
+          description: EXPERIMENT ID
+        EXPERIMENT_TYPE:
+          type: string
+          description: EXPERIMENT TYPE
+        DATA_SOURCE_NAME:
+          type: string
+          description: Names of the data source
+        FEATURE_COLS:
+          type: string
+          description: Names of the feature columns
+        TARGET_COL:
+          type: string
+          description: Name of the target column
+        CONNECTOR_UID:
+          type: string
+          description: Connector uid
+        CONNECTOR_BASE_URL:
+          type: string
+          description: Connector service base URL
+        CONNECTOR_PYTHON_HOST:
+          type: string
+          description: Connector python host
+        CONNECTOR_PYTHON_PORT:
+          type: string
+          description: Connector python port
+        READABILITY:
+          type: string
+          description: Readability
+        TIME:
+          type: string
+          description: time
+        USE_CATALOG:
+          type: string
+          description: Use catalog param
+        SOCKET_URL:
+          type: string
+          description: mosaic-socketio service URL
+        SOCKET_RESOURCE:
+          type: string
+          description: mosaic-socketio socket resource
+        PROJECT_ID:
+          type: string
+          description: project_id
+        CV:
+          type: string
+          description: CV (Cross-Validation fold value)
+        PRE_PROCESSORS:
+          type: string
+          description: Names of pre-processors
+        SCORING:
+          type: string
+          description: Name of the metric to be optimized
+        CPU_REQUEST:
+          type: string
+          description: cpu_request
+        RAM_REQUEST:
+          type: string
+          description: ram_request
+        CPU_LIMIT:
+          type: string
+          description: cpu_limit
+        RAM_LIMIT:
+          type: string
+          description: ram_limit
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

@@ -1,0 +1,67 @@
+API to execute a custom_job_per_type/schedule
+---
+tags:
+  - custom_scheduler
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: custom_job_per_type
+      type: object
+      required:
+        - repo_protocol
+        - repo_name
+        - entity_type
+        - git_username
+        - git_access_token
+        - git_server
+        - git_namespace
+        - language
+        - job_instanceid
+        - attempt_id
+        - env
+      properties:
+        repo_protocol:
+          type: string
+          description: Name of the repo protocol
+        repo_name:
+          type: string
+          description: Name of the repo
+        entity_type:
+          type: string
+          description: Type of the entity
+        git_username:
+          type: string
+          description: Username to access repo
+        git_access_token:
+          type: string
+          description: Access Token to access repo
+        git_server:
+          type: string
+          description: Server name of the repo
+        git_namespace:
+          type: string
+          description: Namespace of the repo
+        language:
+          type: string
+          description: Language of the source code
+        job_instanceid:
+          type: string
+          description: Job Instance Id
+        attempt_id:
+          type: string
+          description: Job Attempt Id for execution
+          required: false
+        env:
+          type: dict
+          description: Environment variables
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error

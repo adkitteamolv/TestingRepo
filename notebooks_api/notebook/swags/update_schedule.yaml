@@ -1,0 +1,77 @@
+API to update a job/schedule using notebook
+---
+tags:
+  - notebook
+parameters:
+  - in: header
+    name: X-Auth-Userid
+    type: string
+  - in: header
+    name: X-Auth-Username
+    type: string
+  - in: header
+    name: X-Auth-Email
+    type: string
+  - in: header
+    name: X-Project-Id
+    type: string
+  - name: notebook_id
+    in: path
+    type: string
+    required: true
+    description: UUID of the notebook
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: update_schedule
+      type: object
+      required:
+      - name
+      - description
+      - cron_json
+      - cron_expr
+      - in_params
+      - project_id
+      - project_name
+      - entity_type
+      - entity_id
+      properties:
+        name:
+          type: string
+          description: Name of the job
+        description:
+          type: string
+          description: Description about the job
+        cron_json:
+          type: object
+          description: Cron expression as json
+        cron_expr:
+          type: string
+          description: Cron expression
+        in_params:
+          type: object
+          description: Input parameters
+        project_id:
+          type: integer
+          description: ID of the project
+        project_name:
+          type: string
+          description: Name of the project
+        entity_type:
+          type: string
+          enum: ['NOTEBOOK', 'FLOW']
+          description: Entity being scheduled
+        entity_id:
+          type: string
+          format: uuid
+          description: ID of the entity being scheduled
+responses:
+  201:
+    description: Success
+  400:
+    description: Bad request
+  401:
+    description: Forbidden
+  500:
+    description: Error
