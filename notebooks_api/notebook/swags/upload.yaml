@@ -39,6 +39,10 @@ parameters:
     name: temp_dir
     type: string
     description: Path of file in case of duplicate file or folder
+  - in: formData
+    name: override_flag
+    type: boolean
+    description: override flag in case of overriding file or folder
 responses:
   201:
     description: Success

@@ -27,7 +27,7 @@ from mosaic_utils.ai.git_repo import utils as git_details
 from flasgger import swag_from
 from mosaic_utils.ai.headers.utils import generate_headers
 from mosaic_utils.ai.logger.utils import log_decorator
-from .constants import GitProvider, MessageConstants, ConfigKeyNames
+from .constants import GitProvider, MessageConstants, ConfigKeyNames, RepoType
 
 from .clients.generic_client import GenericClient
 # from mosaic_utils.ai.headers.utils import check_project_access, generate_headers
@@ -166,7 +166,7 @@ def get_repo_details():
     if x_default_repo_flag:
         # Payload for adding entry for Default in case of existing repos
         g.repo_details = repo_payload
-        payload = git_details.decode_password(repo_payload, "PRIVATE")
+        payload = git_details.decode_password(repo_payload, RepoType.PRIVATE_REPO)
         try:
             add_git_repo(payload, project_id)
         except Exception as ex:

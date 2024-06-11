@@ -97,23 +97,17 @@ log = logging.getLogger("notebooks_api.notebook")
 def spcs_connection_params(connection_id):
     """ fetch connection params for spcs """
     headers = generate_headers(userid=g.user["mosaicId"], email=g.user["email_address"], username=g.user["first_name"])
-    access_data = requests.post(f"{app.config['CONNECTION_MANAGER_URL']}/ConnectionManager/v1/user/checkaccess",
-                                data=connection_id, headers=headers)
-    if access_data.status_code == 200:
-        if not access_data.json()['connectionId']:
-            raise Exception("Unauthorised to use SPCS connection details")
-        connection_data = requests.get(f"{app.config['CONNECTION_MANAGER_URL']}/ConnectionManager/v1/connection/{connection_id}",
-                                       headers=headers)
-        if connection_data.status_code == 200:
-            connection_data = connection_data.json()
-            return {'user': connection_data['dbUserName'], 'password': connection_data['dbPassword'],
-                    'account': connection_data['accountName'], 'role': connection_data['role'],
-                    'warehouse': connection_data['wareHouse']}
-        raise Exception(f"connection-manager for connection_data returned {connection_data.status_code}")
-    raise Exception(f"connection-manager for access returned {access_data.status_code}")
+    connection_data = requests.get(f"{app.config['CONNECTION_MANAGER_URL']}/ConnectionManager/v1/connection/{connection_id}",
+                                   headers=headers)
+    if connection_data.status_code == 200:
+        connection_data = connection_data.json()
+        return {'user': connection_data['dbUserName'], 'password': connection_data['dbPassword'],
+                'account': f"{connection_data['accountName']}.{connection_data['region']}", 'role': connection_data['role'],
+                'warehouse': connection_data['wareHouse']}
+    raise Exception(f"connection-manager for connection_data returned {connection_data.status_code}")
 
 
-def list_snowflake_connections(user_id):
+def list_snowflake_connections(account_id):
     """ list snowflake connections for user """
     headers = generate_headers(userid=g.user["mosaicId"], email=g.user["email_address"], username=g.user["first_name"])
     sources = requests.get(f"{app.config['CONNECTION_MANAGER_URL']}/ConnectionSources/v1/source/", headers=headers)
@@ -125,12 +119,16 @@ def list_snowflake_connections(user_id):
                 break
         if source_id:
             headers['content-type'] = 'application/json'
-            connections = requests.post(f"{app.config['CONNECTION_MANAGER_URL']}/ConnectionManager/v1/connection/subsourceType",
-                                        data=source_id, headers=headers)
-            if connections.status_code == 200:
-                connection_list = [data for data in connections.json() if data['createdBy'] == user_id]
-                return connection_list
-            raise Exception(f"connection-manager for source_id returned {connections.status_code}")
+            params = {
+                'projectId': g.user["project_id"],
+                'accountId': account_id,
+                'sourceTypeId': source_id
+            }
+            connection_list = requests.get(f"{app.config['CONNECTION_MANAGER_URL']}/ConnectionManager/v1/allConnections",
+                                            headers=headers, params=params)
+            if connection_list.status_code == 200:
+                return connection_list.json()
+            raise Exception(f"connection-manager for source_id returned {connection_list.status_code}")
         raise Exception("No source id found for Snowflake connection")
     raise Exception(f"connection-manager for connections returned {sources.status_code}")
 
@@ -177,24 +175,21 @@ def fetch_spcs_data_by_query(query_details, connection_params, service_name=None
             data = [schema.as_dict() for schema in schemas]
         elif query_details['query'] == spcs.SpcsConstants.list_stage:
             stages = session.sql(spcs.SpcsQuery.list_stage).collect()
-            data = [stage.as_dict() for stage in stages if stage.as_dict()['type'] == spcs.SpcsConstants.mountable_stage]
+            data = [stage.as_dict() for stage in stages if spcs.SpcsConstants.mountable_stage in stage.as_dict()['type']]
         elif query_details['query'] == spcs.SpcsConstants.list_compute_pool:
             compute_pools = session.sql(spcs.SpcsQuery.list_compute_pool).collect()
-            if query_details.get('pool_type') == spcs.SpcsConstants.gpu:
-                data = [compute_pool.as_dict() for compute_pool in compute_pools if compute_pool.as_dict()['instance_family'] in spcs.SpcsConstants.gpu_family]
-            else:
-                data = [compute_pool.as_dict() for compute_pool in compute_pools if compute_pool.as_dict()['instance_family'] in spcs.SpcsConstants.cpu_family]
+            data = [compute_pool.as_dict() for compute_pool in compute_pools]
         elif query_details['query'] == spcs.SpcsConstants.get_uri:
-            service_detail = session.sql(spcs.SpcsQuery.describe_service.format(service_name=service_name)).collect()[0].as_dict()
-            if spcs.SpcsConstants.provisioning in service_detail['public_endpoints']:
+            service_detail = session.sql(spcs.SpcsQuery.show_endpoints.format(service_name=f"{connection_params['database']}.{connection_params['schema']}.{service_name}")).collect()[0].as_dict()
+            if spcs.SpcsConstants.provisioning in service_detail['ingress_url']:
                 status = "fail"
-                data = [{"endpoint": service_detail['public_endpoints']}]
-                message = service_detail['public_endpoints']
+                data = [{"endpoint": service_detail['ingress_url']}]
+                message = service_detail['ingress_url']
             else:
-                end_point = literal_eval(service_detail['public_endpoints'])
-                data = [{"endpoint": end_point[list(end_point.keys())[0]]}]
+                end_point = service_detail['ingress_url']
+                data = [{"endpoint": end_point}]
                 message = str({"endpoint": end_point})
-            service_status = session.sql(spcs.SpcsQuery.service_status.format(service_name=service_name)).collect()[0].as_dict()
+            service_status = session.sql(spcs.SpcsQuery.service_status.format(service_name=f"{connection_params['database']}.{connection_params['schema']}.{service_name}")).collect()[0].as_dict()
             service_status = service_status[list(service_status.keys())[0]]
             for pod in literal_eval(service_status):
                 if pod['status'] != spcs.SpcsConstants.ready:
@@ -724,7 +719,7 @@ def register_template_status(
 
     # add to session
     db.session.add(template_status)
-    log.debug("Creating notebook pod=%s", template_status)
+    log.debug("Template Status=%s", template_status)
 
     try:
         db.session.commit()
@@ -737,6 +732,7 @@ def register_template_status(
 
 def get_latest_commit(project_id, enabled_repo):
     """ Returns latest commit id """
+    log.debug(f"Fetching latest commit id")
     commits, message, _ = View(repo_details=enabled_repo).get_latest_commit_id(project_id)
     # git_server_url = app.config["VCS_BASE_URL"]
     # request_url = VcsURL.COMMIT_ID.format(git_server_url)
@@ -1719,7 +1715,9 @@ def list_git_repo(project_id, repo_status=None, remote_branches=True):
     """list git repo details based on project id."""
     try:
         #FETCH ENABLED REPO
+        log.debug(f"Fetching active repos for this project")
         repositories_dict = get_active_repo(project_id)
+        log.debug(f"repositories_dict: {repositories_dict}")
         repositories_dict, is_validator = get_user_role(repositories_dict)
         if repo_status:
             if repositories_dict and repositories_dict.get("repo_name", "").lower() == "default":
@@ -1730,6 +1728,7 @@ def list_git_repo(project_id, repo_status=None, remote_branches=True):
         queries = [GitRepo.project_id == project_id]
         if is_validator:
             queries.append(func.lower(GitRepo.repo_name) != 'default')
+        log.debug(f"Querying nb_git_repository table")
         repos = db.session\
             .query(GitRepo.repo_id, GitRepo.repo_status,
                    GitRepo.repo_type, GitRepo.repo_url, GitRepo.access_category,GitRepo.proxy_details,

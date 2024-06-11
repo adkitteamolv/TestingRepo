@@ -159,7 +159,7 @@ def load_data_image():
     """ master records for plugin """
     # define resources
     docker_images = {
-        "python": ("python", "{}{}/plugin:2.0.1".format(app.config["GIT_REGISTRY"],
+        "python": ("python", "{}{}/docker-builder-plugin:2024-05-20-06-57-45".format(app.config["GIT_REGISTRY"],
                                                         app.config["REGISTRY_DIR_PATH_PYTHON_PLUGIN_IMAGE"])),
         "feast": ("feast", "{}{}/plugin:feast_1.0.1".format(app.config["GIT_REGISTRY"],
                                                             app.config["REGISTRY_DIR_PATH_PYTHON_PLUGIN_IMAGE"]))

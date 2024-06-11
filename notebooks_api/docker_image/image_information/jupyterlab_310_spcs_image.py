@@ -4,8 +4,8 @@ Docker Image Information : Python 3.10 - JupyterLab
 from flask import current_app as app
 from ..constants import PRE_BUILD_SPCS
 
-JUPYTERLAB_SPCS_310_TAG = "python3.10"
-JUPYTERLAB_SPCS_310_GPU_TAG = "python3.10"
+JUPYTERLAB_SPCS_310_TAG = "python3.10_1"
+JUPYTERLAB_SPCS_310_GPU_TAG = "python3.10_1"
 
 JUPYTERLAB_310_SPCS_IMAGE = {
     "name": "Jupyterlab-3.10-SPCS",

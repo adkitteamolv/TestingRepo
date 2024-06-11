@@ -37,6 +37,7 @@ $$;
     list_stage = "SHOW STAGES;"
     service_status = "SELECT SYSTEM$GET_SERVICE_STATUS('{service_name}');"
     stop_servie = "DROP SERVICE {service_name};"
+    show_endpoints = "SHOW ENDPOINTS IN SERVICE {service_name};"
 
 
 class SpcsConstants:
@@ -51,7 +52,7 @@ class SpcsConstants:
     list_compute_pool = "list_compute_pool"
     list_schema = "list_schema"
     list_stage = "list_stage"
-    mountable_stage = "INTERNAL NO CSE"
+    mountable_stage = "INTERNAL"
     provisioning = "Endpoints provisioning in progress"
     ready = "READY"
     service_stage_yaml = "service_with_stage.yaml"

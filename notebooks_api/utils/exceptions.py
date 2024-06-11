@@ -127,6 +127,16 @@ class PluginException(MosaicException):
     code = 500
     message_code = "PLUGIN_ERROR_0001"
 
+class UploadFileException(MosaicException):
+    """ Plugin related exceptions """
+    code = 500
+    message_code = "UPLOAD_FILE_ERROR_0001"
+
+
+class PreviewFileException(MosaicException):
+    """ Plugin related exceptions """
+    code = 500
+    message_code = "Preview_FILE_ERROR_0001"
 
 class NoGitRepoEnabled(MosaicException):
     """ Plugin related exceptions """

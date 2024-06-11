@@ -100,6 +100,7 @@ def stop_notebook_pod(user, notebook, notebook_pod, project_id):
     }
 
     # stop the container
+    log.debug(f"Stopping the notebooks pod, by calling delete method on HUB_BASE_URL")
     response = requests.delete(request_url, headers=request_headers)
     # if the pod is in pending state and user clicks on stop pod from UI
     # response status code will be 400 so

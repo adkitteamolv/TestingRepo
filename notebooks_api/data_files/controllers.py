@@ -10,10 +10,14 @@ from flask import (
     Response,
     jsonify,
     request,
+    send_file,
     current_app as app,
     g
 )
-
+import re
+from .constants import PREVIEW_PAYLOAD_PATTERN
+from pathlib import Path
+from ..utils.exceptions import UploadFileException, MosaicException, PreviewFileException
 
 
 from mosaic_utils.ai.headers.utils import generate_headers
@@ -68,11 +72,15 @@ def upload_api():
     API to create data files
     """
     try:
-        # upload the file to S3
+        file_name = request.form.get("file_name")
+        if file_name.endswith(".exe"):
+            raise UploadFileException(msg_code="UPLOAD_FILE_ERROR_0001")
+
         file = request.files.get("datafile")
         eof = request.form.get("eof")
         uuid = request.form.get("file_unique")
         file_type = request.form.get("file_content_type")
+
 
         # upload type can be bucket or data upload
         upload_type = request.args.get('upload_type')
@@ -101,6 +109,10 @@ def upload_api():
             destination_path, file, request.headers["X-Project-Id"], uuid, eof, file_type, overwrite, upload_type)
         return jsonify({"data_files": response}), 201
     # pylint: disable=broad-except
+
+    except MosaicException as ex:
+        log.exception(ex)
+        return jsonify(ex.message_dict()), ex.code
     except Exception as ex:
         log.debug(ex)
         return str(ex), 500
@@ -174,19 +186,42 @@ def preview_api(file_type, sub_type, dataset_name):
     API to preview data files
     """
     try:
+        if file_type!='FILE':
+            raise PreviewFileException(msg_code="FILE_TYPE_NOT_SUPPORTED")
         folder_structure = request.args.get("folder_structure", default=None)
         volume_path = request.args.get("volume_path", default=None)
         row_count = int(request.args.get("row_count", 10))
-        filter_columns = request.args.get("filterColumns", default='')
+        filter_columns = request.args.get("filterColumns", default=None)
         folder_structure = str(folder_structure) + "/" if folder_structure else ""
-        return preview_dataset(
-            dataset_name, file_type, sub_type, folder_structure, row_count, 
-            volume_path, filter_columns
-        )
-    # pylint: disable=broad-except
+        if folder_structure and not PREVIEW_PAYLOAD_PATTERN.match(folder_structure):
+            raise PreviewFileException(msg_code="INVALID_INPUT_FILE_PREVIEW")
+
+        minio_data_path = app.config["NOTEBOOK_MOUNT_PATH"]
+        bucket_name = app.config["MINIO_DATA_BUCKET"]
+        if dataset_name:
+            if not PREVIEW_PAYLOAD_PATTERN.match(dataset_name):
+                 raise PreviewFileException(msg_code="INVALID_INPUT_FILE_PREVIEW")
+
+        if sub_type not in ["raw", "csv", "xlsx", "xls"]:
+            raise PreviewFileException(msg_code="FILE_SUBTYPE_NOT_SUPPORTED")
+
+        if not volume_path:
+            local_file_path = f"{minio_data_path}{bucket_name}/{folder_structure}{dataset_name}"
+        else:
+            local_file_path = f"{folder_structure}{dataset_name}"
+
+        if sub_type == "raw":
+            return send_file(local_file_path, mimetype='text/html')
+        else:
+            previewed_data = preview_dataset(local_file_path, dataset_name, file_type, sub_type, folder_structure, row_count, volume_path, filter_columns)
+            return jsonify(previewed_data)
+
+    except MosaicException as ex:
+        log.exception(ex)
+        return jsonify(ex.message_dict()), ex.code
     except Exception as ex:
-        log.debug(ex)
-        return ErrorCodes.ERROR_0005, 500
+        log.exception(ex)
+        return jsonify(str(ex)), 500
 
 
 @data_files_api.route("/v1/data-files/delete_files", methods=["DELETE"])

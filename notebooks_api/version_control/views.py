@@ -202,6 +202,7 @@ class View:
 
     def get_latest_commit_id(self, project_id):
         """ Method to fetch the recent commit id """
+        current_app.logger.debug(f"Fetching latest commit ID")
         latest_commit_id, project_found, message = g.CLIENT.get_latest_commit(project_id)
         code = 204
         if project_found:
@@ -341,7 +342,7 @@ class View:
         return g.repo_details['repo_url']
 
     @log_decorator
-    def upload_folder(self, repo, file, upload_path, notebook_id, commit_message):
+    def upload_folder(self, repo, file, upload_path, notebook_id, commit_message, override_flag=None):
         temp_file_dir = tempfile.mkdtemp()
         if len(upload_path) > 0:
             os.makedirs(os.path.join(temp_file_dir, upload_path))
@@ -351,12 +352,12 @@ class View:
             extract_tar(tmp_file_path, os.path.join(temp_file_dir, upload_path))
             os.unlink(tmp_file_path)
             response, temp_dir = self._git_upload(repo, temp_file_dir, commit_message=commit_message,
-                                                  upload_path=upload_path)
+                                                  upload_path=upload_path, ignore_duplicate=override_flag)
         elif file.filename.endswith(".zip"):
             extract_zip(tmp_file_path, os.path.join(temp_file_dir, upload_path))
             os.unlink(tmp_file_path)
             response, temp_dir = self._git_upload(repo, temp_file_dir, commit_message=commit_message,
-                                                  upload_path=upload_path)
+                                                  upload_path=upload_path, ignore_duplicate=override_flag)
         elif file.filename.endswith("note.json"):
             if notebook_id:
                 tmpfile = tempfile.mkdtemp()
@@ -364,14 +365,14 @@ class View:
                 dir_tmp = os.path.join(tmpfile, "Zeppelin-Notebooks", notebook_id)
                 copy_tree(os.path.join(temp_file_dir, upload_path), dir_tmp)
                 response, temp_dir = self._git_upload(repo, tmpfile, commit_message=commit_message,
-                                                      upload_path=upload_path)
+                                                      upload_path=upload_path, ignore_duplicate=override_flag)
                 when_response_is_blank(tmpfile, None)
             else:
                 response, temp_dir = self._git_upload(repo, temp_file_dir, commit_message=commit_message,
-                                                      upload_path=upload_path)
+                                                      upload_path=upload_path, ignore_duplicate=override_flag)
         else:
             response, temp_dir = self._git_upload(repo, temp_file_dir, commit_message=commit_message,
-                                                  upload_path=upload_path)
+                                                  upload_path=upload_path, ignore_duplicate=override_flag)
         when_response_is_blank(temp_file_dir, None)
         return response, temp_dir
 

@@ -250,7 +250,7 @@ def load_data():
                     container_uid=image.get("container_uid")
                 )
                 insert_data_extra_attribute(docker_image_extra_attribute)
-            elif record.as_dict().get("name") in ["Jupyterlab-3.8", "Jupyterlab-3.9", "Jupyterlab-3.10"]:
+            elif record.as_dict().get("name") in ["Jupyterlab-3.8", "Jupyterlab-3.9", "Jupyterlab-3.10", "Jupyterlab-3.10-SPCS"]:
                 docker_image_extra_attribute = DockerImageExtraAttribute(
                     created_by="system",
                     updated_by="system",

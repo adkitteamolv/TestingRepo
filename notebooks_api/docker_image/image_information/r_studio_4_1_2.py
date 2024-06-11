@@ -3,7 +3,7 @@ Docker Image Information : R Studio 4.1.2
 """
 from flask import current_app as app
 
-R_STUDIO_TAG = "rs3.51-readonly-V4.1"
+R_STUDIO_TAG = "rs3.52-readonly-V4.1"
 R_STUDIO_GPU_TAG = "gpu-rs3.50"
 
 R_V4_1_2_STUDIO_IMAGE = {

@@ -187,7 +187,7 @@ def create_backup_table():
         print("The count is : "+str(count))
         if count>0:
             table_name = "nb_git_repository_bkBeforeValidatorStory" + str(datetime.utcnow().strftime('%Y%m%d%H%M%S'))
-            query = f"CREATE TABLE {table_name} AS SELECT * FROM nb_git_repository"
+            query = text("CREATE TABLE " + table_name + " AS SELECT * FROM nb_git_repository")
             op.execute(query)
         session.flush()
         session.commit()

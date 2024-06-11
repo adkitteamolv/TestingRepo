@@ -25,7 +25,7 @@ from .manager import (
 )
 from .exceptions import ErrorCodes
 from .constants import ENABLED, DISABLED
-from ..utils.exceptions import MosaicException
+from ..utils.exceptions import MosaicException, PluginException
 
 log = logging.getLogger("notebooks_api")
 
@@ -75,6 +75,14 @@ def create_plugin():
     log.info(f"Response from create_plugin: {result}")
     return jsonify(result), 201
 
+import uuid
+
+def is_valid_uuid(value):
+    try:
+        uuid.UUID(str(value))
+        return True
+    except ValueError:
+        return False
 
 @plugins_api.route("/v1/plugin_data", methods=["POST"])
 @swag_from("swags/get_plugin_data.yaml")
@@ -84,21 +92,29 @@ def get_plugin_info():
     Args:
         plugin_filters
     """
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    log.info(f"Inside get_plugin_info\nrequest_json: {data}")
+        log.info(f"Inside get_plugin_info\nrequest_json: {data}")
 
-    if data != {} and 'plugin_id' not in data:
-        return ErrorCodes.ERROR_0002, 500
+        if data != {} and 'plugin_id' not in data:
+            return ErrorCodes.ERROR_0002, 500
 
-    if not set(list(data.keys())).issubset(['plugin_id', 'name', 'project_id', 'model_id',
-                                            'version_id', 'workflow_id', 'section']):
-        return ErrorCodes.ERROR_0011, 500
+        if not is_valid_uuid(data['plugin_id']):
+            raise PluginException(msg_code="PLUGIN_ID_ERROR_0001")
 
-    result = get_plugin_input_data(data)
+        if not set(list(data.keys())).issubset(['plugin_id', 'name', 'project_id', 'model_id',
+                                                'version_id', 'workflow_id', 'section']):
+            return ErrorCodes.ERROR_0011, 500
 
-    log.info(f"Response from get_plugin_info: {result}")
-    return jsonify(result), 200
+        result = get_plugin_input_data(data)
+
+        log.info(f"Response from get_plugin_info: {result}")
+        return jsonify(result), 200
+    except MosaicException as ex:
+        log.exception(ex)
+        return jsonify(ex.message_dict()), ex.code
+
 
 
 @plugins_api.route("/v1/get_plugin_data/custom_plugin_id/<string:custom_plugin_id>/plugin_id/<string:plugin_id>", methods=["GET"])
@@ -292,6 +308,7 @@ def upload_and_unzip_file():
 
     destination_path = request.args.get("destination_path")
     file = request.files['zip_file']
+    log.debug(f"Destination Path: {destination_path}, filename: {file.filename}")
 
     if not destination_path or destination_path == "":
         return ErrorCodes.ERROR_0009, 500

@@ -12,6 +12,7 @@ from .vscode_jdk_image import VSCODE_JDK_IMAGE
 from .r_studio_4_1_2 import R_V4_1_2_STUDIO_IMAGE
 from .jupyter_39_snowflake import JUPYTER_39_SNOW_IMAGE
 from .vscode_python_39 import VSCODE_PYTHON_39_IMAGE
+from .jupyterlab_310_spcs_image import JUPYTERLAB_310_SPCS_IMAGE
 
 DOCKER_IMAGES = (
     JUPYTER_38_IMAGE,
@@ -24,6 +25,7 @@ DOCKER_IMAGES = (
     JUPYTERLAB_310_IMAGE,
     VSCODE_JDK_IMAGE,
     R_V4_1_2_STUDIO_IMAGE,
-    VSCODE_PYTHON_39_IMAGE
+    VSCODE_PYTHON_39_IMAGE,
+    JUPYTERLAB_310_SPCS_IMAGE
 
 )

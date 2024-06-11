@@ -15,7 +15,8 @@ import subprocess
 import jwt
 from flask import current_app as app
 from flask import jsonify, g
-
+import pandas as pd
+from pathlib import Path
 from mosaic_utils.ai.data_files.utils import (
     convert_size,
     convert_into_bytes)
@@ -24,6 +25,9 @@ from mosaic_utils.ai.file_utils import check_tar_zip
 from .exceptions import ErrorCodes
 from mosaic_utils.ai.audit_log.utils import audit_logging
 from mosaic_utils.ai.headers.constants import Headers
+
+from ..utils.exceptions import PreviewFileException, MosaicException
+
 from notebooks_api.utils.exceptions import ServiceConnectionError, FetchProjectResourceQuotaError, MosaicException
 # pylint: disable=invalid-name
 log = logging.getLogger("notebooks_api")
@@ -268,44 +272,47 @@ def decode_jwt(data):
     return jwt.decode(data, secret, algorithms=[algorithm])
 
 
-def preview_dataset(dataset_name, file_type, sub_type, folder_structure, row_count=10, volume_path=None, filter_columns=None):
+
+def preview_dataset(local_file_path, dataset_name, file_type, sub_type, folder_structure, row_count=10, volume_path=None, filter_columns=None):
     """ To display data preview """
-    connector_backend_config = app.config["CONNECTOR_BACKEND_URL"]
-    connector_backend_url = (f"{connector_backend_config}v2/connectors/"
-                             f"{'rawdata' if sub_type=='raw' else 'data'}")
 
-    minio_data_path = app.config["POD_DATA_PATH"]
-    bucket_name = app.config["MINIO_DATA_BUCKET"]
-    if not volume_path:
-        local_file_path = f"{minio_data_path}{bucket_name}/{folder_structure}{dataset_name}"
-    else:
-        local_file_path = f"{folder_structure}{dataset_name}"
+    try:
+        if sub_type in ['xls', 'xlsx']:
+            df = pd.read_excel(local_file_path, engine='xlrd' if sub_type == 'xls' else None)
+        elif sub_type == 'csv':
+            df = pd.read_csv(local_file_path)
 
-    datasource_details = {
-        "READER": {
-            "local_file_path": local_file_path,
-            "type": file_type,
-            "sub_type": sub_type,
-            "header": "true",
-            "rowCount": row_count,
-            "useStreaming": "true"
+        if filter_columns:
+            filter_columns = filter_columns.split(',')
+            df = df[filter_columns]
+        sample_data = df.head(row_count)
+        field_names = sample_data.columns.tolist()
+        datatypes = [
+            'STRING' if df[col].dtype == 'object' else 'BOOLEAN' if df[col].dtype == 'bool' else df[col].dtype.name.upper()
+            for col in field_names]
+        display_names = field_names
+        sample_data_transposed = sample_data.transpose().values.tolist()
+        response = {
+            "data": {
+                "datatype": datatypes,
+                "display_name": display_names,
+                "field_name": field_names,
+                "local_file_path": str(local_file_path),
+                "sample_data": sample_data_transposed,
+                "total_record_count": len(df)
+            },
+            "message": "Data fetched successfully",
+            "status": "success"
         }
-    }
-
-    if filter_columns:
-        filter_columns = filter_columns.split(',')
-        datasource_details["READER"]["filterColumns"] = filter_columns
-
-    headers = {
-        "accept": "text/html, */*"
-    }
-    sample_data_response = requests.post(
-        connector_backend_url,
-        json=datasource_details,
-        headers=headers)
-    # Manipulate profile result to display on UI
-    return ((sample_data_response.text, sample_data_response.status_code) if sub_type == "raw"
-            else manipulate_sample_response(sample_data_response, dataset_name))
+        return response
+    except FileNotFoundError:
+        raise PreviewFileException(msg_code="FILE_NOT_FOUND_ERROR_0001")
+    except pd.errors.EmptyDataError:
+        raise PreviewFileException(msg_code="DATA_NOT_FOUND_ERROR_0001")
+    except KeyError as e:
+        raise PreviewFileException(msg_code="COLUMN_NOT_FOUND_ERROR_0001")
+    except Exception as e:
+        raise PreviewFileException(msg_code="PREVIEW_FILE_ERROR_0001")
 
 
 def manipulate_sample_response(sample_data_response, dataset_name=None):
@@ -808,6 +815,7 @@ def get_project_resource_quota(project_id, console_url, headers, required_alloca
         total_consumed_quota_bytes = convert_into_bytes(total_consumed_quota)
         if required_allocated :
             project_details_url = f"{console_url}/secured/api/project/v1/resource/{project_id}"
+            log.debug(f"Fetching project details ")
             response = requests.get(project_details_url, headers=headers)
             if response.status_code == 200:
                 response_json = response.json()
@@ -820,8 +828,11 @@ def get_project_resource_quota(project_id, console_url, headers, required_alloca
         else:
             return  total_consumed_quota_bytes
     except ConnectionError as ex:
+        log.exception(ex)
         raise ServiceConnectionError(msg_code="SERVICE_CONNECTION_ERROR_001")
     except MosaicException as ex:
+        log.exception(ex)
         raise ex
     except Exception as ex:
+        log.exception(ex)
         raise FetchProjectResourceQuotaError

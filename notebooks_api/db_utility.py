@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Utility file to handle DB type  differences"""
 import sqlalchemy as sa
+from sqlalchemy import text
 from sqlalchemy.dialects import postgresql
 from alembic import op
 from notebooks_api import get_db_type
@@ -115,6 +116,6 @@ def replace_enum_values(
         ))
         op.execute(cmd_alter)
     # Remove old type
-    cmd_drop = "DROP TYPE {};".format(tmp_name)
+    cmd_drop = text("DROP TYPE " + tmp_name)
     op.execute(cmd_drop)
 

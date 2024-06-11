@@ -6,6 +6,7 @@ import tempfile
 import base64
 from urllib.parse import urlparse, quote
 import requests
+from notebooks_api.utils.web_utils import auth_call
 from flask import current_app as app
 from mosaic_utils.ai.logger.utils import log_decorator
 from notebooks_api.utils.exceptions import (
@@ -473,9 +474,8 @@ class BitBucketClient(GitClient):
                 if permission in ["REPO_WRITE", "REPO_ADMIN"]:
                     group_name = group_value["group"]["name"]
                     part = f"/rest/api/1.0/admin/groups/more-members?context={group_name}&filter={username}"
-                    users_response = requests.get(url=hostname + part,
-                                                  auth=(self.configuration["username"],
-                                                        self.configuration["password"]))
+                    users_response = auth_call(hostname + part, username=self.configuration["username"],
+                                               pwd=self.configuration["password"])
                     if users_response.status_code == 200 and users_response.json()["values"]:
                         return "Success"
         raise RepoAccessException

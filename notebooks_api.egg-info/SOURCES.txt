@@ -123,6 +123,7 @@ notebooks_api/utils/project.py
 notebooks_api/utils/pytest.py
 notebooks_api/utils/quantity.py
 notebooks_api/utils/tags.py
+notebooks_api/utils/web_utils.py
 notebooks_api/version_control/__init__.py
 notebooks_api/version_control/cli.py
 notebooks_api/version_control/constants.py

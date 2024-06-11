@@ -95,7 +95,7 @@ def check_for_duplicate(docker_image_name, docker_image_id, tags, update):
         if result_set.id == docker_image_id:
             return
     if result_set is not None:
-        log.error(
+        log.info(
             "Template with name=%s already exist in project=%s",
             docker_image_name,
             project_tag

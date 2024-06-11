@@ -116,6 +116,7 @@ def get_plugin_input_data(filter_value):
 
         plugin_data = query.first()
 
+
         if not plugin_data:
             plugin_data = db.session.query(CustomPlugins.input_form_type,
                                            CustomPlugins.input_parameter_file_name,

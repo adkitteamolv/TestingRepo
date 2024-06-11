@@ -14,6 +14,7 @@ from notebooks_api.utils.file_utils import decode_base64_to_string, encode_to_ba
 from notebooks_api.utils.exceptions import (RepoAuthentiactionException,
                                 VCSException, InvalidRepoUrlException,
                                 RepoAccessException, InvalidBranchORBaseDirException)
+from notebooks_api.utils.web_utils import get_call, delete_call
 from uuid import UUID
 from mosaic_utils.ai.logger.utils import log_decorator
 import logging
@@ -339,7 +340,7 @@ class GitHubClient(GitClient):
                 for content_file in tree:
                     if content_file['path'] == file_name:
                         content_url = content_file['url']
-                        file_content_status = requests.get(content_url, headers=headers)
+                        file_content_status = get_call(content_url, headers)
                         file_content = file_content_status.json()
                         file_content['download_url'] = None
                         self.check_statuscode(file_content_status)
@@ -411,8 +412,7 @@ class GitHubClient(GitClient):
                 for elem in file_object:
                     delete_api_url = self.github_api_url + '/repos/{repo}/contents/{file_path}'.format(
                         repo=repo_name, file_path=elem['path'])
-                    status = requests.delete(delete_api_url, headers=headers,
-                                             data=json.dumps({"message": message, "sha": elem['sha'],
+                    status = delete_call(delete_api_url, headers, json.dumps({"message": message, "sha": elem['sha'],
                                                               "branch": branch_name}))
             else:
                 delete_api_url = self.github_api_url + '/repos/{repo}/contents/{file_path}'.format(
@@ -514,7 +514,7 @@ class GitHubClient(GitClient):
                 name = content_file['path'].split('/')[-1]
                 if '.' in name:
                     file_content_url = content_file['url']
-                    file_content_status = requests.get(file_content_url, headers=headers)
+                    file_content_status = get_call(file_content_url, headers)
                     file_content = file_content_status.json()
                     self.check_statuscode(file_content_status)
                     files.append({

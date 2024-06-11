@@ -61,6 +61,5 @@ def validate_subscriber(func):
         except Exception as ex:
             log.exception(ex)
             raise
-    log.debug("Exiting decorator function")
     return fetch_validate_subscriber
 

@@ -9,7 +9,16 @@ request_headers = {
 
 template_names = ["Spark-3.6", "Spark-3.8", "Spark Distributed", "R-Jupyter", "Python-3.6", "Python-3.7", "RStudio-4",
                   "RStudio_RHEL-4.1", "Jupyterlab-3.6", "Jupyterlab-3.7", "R-Jupyterlab", "spark-Jupyterlab",
-                  "VSCode-Scala2.12", "Jupyterlab-3.10-SPCS"]
+                  "VSCode-Scala2.12"]
+
+
+def delete_template_data(image = ""):
+    try:
+        url = "http://notebooks-api:5000/notebooks/api/v1/docker-images/{}".format(image)
+        resp = requests.delete(url, headers=request_headers)
+        print("\nTemplate image deleted")
+    except Exception as e:
+        print("\nException")
 
 url = "http://notebooks-api:5000/notebooks/api/v1/docker-images"
 resp = requests.get(url, headers=request_headers)
@@ -23,11 +32,6 @@ for item in output:
 print("\nImages to be deleted-", delete_images)
 
 for image in delete_images:
-    try:
-        url = "http://notebooks-api:5000/notebooks/api/v1/docker-images/{}".format(image)
-        resp = requests.delete(url, headers=request_headers)
-        print("\nTemplate image deleted")
-    except Exception as e:
-        print("\nException")
+    delete_template_data(image)
 
 print("Completed")

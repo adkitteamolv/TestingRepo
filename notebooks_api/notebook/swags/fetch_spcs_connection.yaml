@@ -11,6 +11,11 @@ parameters:
     name: X-Auth-Username
     type: string
     required: true
+  - in: query
+    name: account_id
+    schema:
+      type: string
+    required: true
   - in: header
     name: X-Auth-Email
     type: string

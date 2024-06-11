@@ -131,10 +131,11 @@ from .manager import (
     create_spcs_service,
     stop_spcs_service
 )
+from ..utils.exceptions import UploadFileException, MosaicException
+
 from .constants import Headers
 from ..docker_image.manager import delete_template
 from .html_generator.html_generator import HtmlGenerator
-
 # Register metrics if not registered at with Flask create_app()
 if metrics is None:
     # pylint: disable=assignment-from-no-return, invalid-name
@@ -152,7 +153,7 @@ def list_sonwflake_connection():
     Api to list snowflake connections created by user
     """
     try:
-        connection_list = list_snowflake_connections(g.user["mosaicId"])
+        connection_list = list_snowflake_connections(account_id=request.args['account_id'])
         return jsonify(connection_list), 200
     except Exception as ex:
         log.debug(ex)
@@ -479,10 +480,8 @@ def read_api(notebook_id):
          notebook_id (UUID): UUID of the notebook
     """
     log.debug("Test")
-    log.error("Test")
 
     log.debug(g.user)
-    log.error(g.user)
 
     # parse data
     notebook_id = str(notebook_id)
@@ -662,7 +661,6 @@ def start(notebook):
     if init_script == "":
         init_script = "ls"
     log.debug(init_script)
-    log.error(init_script)
 
     # prepare spawner options
     options = {
@@ -989,7 +987,7 @@ def stop_template(notebook, project_id):
             create_pod_metrics(notebook_pod_metrics)
             log.info('metrics added to the databases successfully')
         else:
-            log.error(metrics)
+            log.info(metrics)
     except Exception as e:
         log.error(e)
 
@@ -1536,7 +1534,7 @@ def execute_schedule(notebook_id, path):
     """
     # Fetching data
     notebook_id = str(notebook_id)
-    log.error(notebook_id)
+    log.info(notebook_id)
     data = request.get_json(silent=True)
     if data is None:
         data = {}
@@ -1554,7 +1552,7 @@ def execute_schedule(notebook_id, path):
 
     notebook_details = Notebook.query.get(notebook_id)
     docker_image_details = DockerImage.query.get(notebook_details.docker_image_id)
-    log.error(docker_image_details.kernel_type)
+    log.info(docker_image_details.kernel_type)
 
     # Fetching PIP packages and Init-Script for installing in the Scheduled
     # container
@@ -1577,7 +1575,7 @@ def execute_schedule(notebook_id, path):
     # Creating repo name
     repo_name = create_repo_name(project_name, project_id)
 
-    log.error(repo_name)
+    log.info(repo_name)
     log.debug(repo_name)
 
     payload = {
@@ -1726,8 +1724,16 @@ def upload_api():
     API to upload folder or file
     """
     try:
+        file_name = request.form.get("name")
+        if file_name.endswith(".exe"):
+            raise UploadFileException(msg_code="UPLOAD_FILE_ERROR_0001")
+
+
         temp_dir = (
             request.form["temp_dir"].strip() if "temp_dir" in request.form else None
+        )
+        override_flag = (
+            request.form["override_flag"].strip() if "override_flag" in request.form else None
         )
         if "tar_file" not in request.files and not temp_dir:
             raise Exception("Please upload a valid file/folder")
@@ -1745,15 +1751,19 @@ def upload_api():
         )
         _, project = get_tag("project", tags, split=True)
 
-        response, temp_dir = vcs_upload(temp_dir, file, project, commit_message, upload_path)
+        response, temp_dir = vcs_upload(temp_dir, file, project, commit_message, upload_path, override_flag)
         return jsonify(message=response, temp_path=temp_dir)
     # pylint: disable=broad-except
+
+    except MosaicException as ex:
+        log.exception(ex)
+        return jsonify(ex.message_dict()), ex.code
     except Exception as ex:
         log.exception(ex)
         return Response(ex.args[0], status=400)
 
 
-def vcs_upload(temp_dir, file, project, commit_message, upload_path):
+def vcs_upload(temp_dir, file, project, commit_message, upload_path, override_flag=None):
     """
     :param temp_dir:
     :param file:
@@ -1763,6 +1773,7 @@ def vcs_upload(temp_dir, file, project, commit_message, upload_path):
     :return:
     """
     try:
+        log.debug(f"Inside vcs_upload")
         # headers = generate_headers(
         #     userid=g.user["mosaicId"],
         #     email=g.user["email_address"],
@@ -1777,7 +1788,7 @@ def vcs_upload(temp_dir, file, project, commit_message, upload_path):
         data.update(commit_message_payload)
         if not temp_dir:
             temp_file = tempfile.mkdtemp()
-            response, temp_dir = View(project_id=g.user["project_id"]).upload_folder(repo=project, file=file, upload_path=upload_path, notebook_id=None, commit_message=commit_message)
+            response, temp_dir = View(project_id=g.user["project_id"]).upload_folder(repo=project, file=file, upload_path=upload_path, notebook_id=None, commit_message=commit_message, override_flag=override_flag)
             if os.path.isdir(temp_file):
                 shutil.rmtree(temp_file)
         else:
@@ -1981,6 +1992,7 @@ def start_template_new(notebook, enabled_repo, register_condition):
     """ Method to start notebook """
     # prepare url
     try:
+        log.debug(f"Inside start_template_new function")
         user_id = g.user["mosaicId"]
         commit_type = notebook.get('auto_commit')
         notebook_id = notebook["docker_image"]["id"]
@@ -2038,24 +2050,24 @@ def start_template_new(notebook, enabled_repo, register_condition):
             template_project = notebook_pod.id
             # fetch subscriber info
             template_status_id = notebook_pod.id
-            log.error("Subscription Resource Request")
+            log.info("Subscription Resource Request")
             resource_key, resource_request = fetch_resource_info(notebook.get('resource').get('extra'), notebook.get('resource').get('cpu'))
-            log.error(resource_key)
-            log.error(resource_request)
+            log.info(resource_key)
+            log.info(resource_request)
             requested_usage = {resource_key: resource_request}
-            log.error(g.product_id)
+            log.info(g.product_id)
             try:
                 pod_name = create_pod_name(project, user_id, template_project, notebook_type, notebook.get('spcs_data'))
                 # removing @ as after spawning the notebook in k8s, @ is automatically removed
                 # syncing pod name in db with spawned notebook
                 revised_pod_name = pod_name.replace("@", "")
                 subscriber_info = get_subscriber_info(user_id, resource_key, g.product_id)
-                log.error(subscriber_info)
+                log.info(subscriber_info)
                 # create new entry for resource requested for metering
-                log.error(requested_usage)
+                log.info(requested_usage)
                 validate_subscriber_info(subscriber_info)
                 notebook_name = notebook["docker_image"]["name"]
-                log.error(notebook_name)
+                log.info(f"notebook_name: {notebook_name}")
                 metering_info = {"user_id": user_id, "resource_key": resource_key,
                                  "resource_request": resource_request, "pod_id": template_status_id,
                                  "description": notebook_name, "project_id": project,
@@ -2646,7 +2658,7 @@ def sample_exp_upload():
             temp_file_dir = tempfile.mkdtemp()
             temp_file = shutil.copyfile(file_path, f"{temp_file_dir}/sample_{exp_name}.ipynb")
         else:
-            log.error(f"{file_path} not found")
+            log.info(f"{file_path} not found")
             raise Exception(f"sample experiment file not found for the selected algorithm {exp_algo}")
         commit_message = f"sample_{exp_name}.ipynb template upload"
         # git_server_url = app.config["VCS_BASE_URL"]

@@ -21,6 +21,7 @@ import random
 import sys
 import time
 import requests
+from notebooks_api.utils.web_utils import put_call, get_call
 import yaml
 from urllib.parse import quote_plus
 from dateutil.tz import tzlocal # pylint: disable=unused-import
@@ -480,7 +481,6 @@ def new_create_job_manifest(
         name="tmp", empty_dir=client.V1EmptyDirVolumeSource(medium="")
     )
 
-    volume_logs = "log-storage"
     user_impersonation_flag = envs.get("USER_IMPERSONATION")
     user_impersonation = bool(user_impersonation_flag and
                               user_impersonation_flag.lower() == "true")
@@ -514,8 +514,7 @@ def new_create_job_manifest(
     job_volume_mount = [client.V1VolumeMount(name=volume.name, mount_path="/notebooks"),
                         client.V1VolumeMount(name=volume_git.name, mount_path="/git"),
                         client.V1VolumeMount(name=volume_tmp.name, mount_path="/tmp"),
-                        client.V1VolumeMount(name=volume_shared_code.name, mount_path="/code"),
-                        client.V1VolumeMount(name=volume_logs, mount_path=current_app.config["LOG_DIRECTORY"])]
+                        client.V1VolumeMount(name=volume_shared_code.name, mount_path="/code")]
     volume_list = [volume, volume_git, volume_tmp, volume_shared_code]
 
     volume_count_output, volume_mount_output = volumeVolumeMounts(g.user["mosaicId"], g.user["project_id"])
@@ -1604,16 +1603,13 @@ def check_status_for_job(job_name, experiment_id, headers):
                 check_job_status(job_name, experiment_id, headers, job_id, request_url)
             # pylint: disable=broad-except
             except Exception as ex:
-                response = requests.put(
-                    request_url,
-                    json={
+                json_data = {
                         "status": "aborted",
                         "message": "job deleted for experiment_id: {}".format(
                             experiment_id
                         ),
-                    },
-                    headers=headers,
-                )
+                    }
+                response = put_call(request_url, headers, json_data )
                 if response.status_code == 200:
                     current_app.logger.debug(
                         "status update succeeded for the experiment_id: {}".format(
@@ -1887,11 +1883,11 @@ def create_package_installation(kernel_type, pip_packages, cran_packages, init_s
     cran_url = current_app.config["R_PACKAGE_REPO"]
     conda_url = current_app.config["CONDA_PACKAGE_REPO"]
     conda_r_url = current_app.config["CONDA_R_PACKAGE_REPO"]
-    log_directory = current_app.config["LOG_DIRECTORY"]
     conda_cmd = ''
     trusted_host = urllib.parse.urlparse(py_url).hostname
-    init_script_path = "{0}/{1}_{2}_init-script.log".format(log_directory, log_id, project_id)
-    package_file_path = "{0}/{1}_{2}_package-installation.log".format(log_directory, log_id, project_id)
+    # creating these tmp files to validate logs
+    init_script_path = "/tmp/tmp-init-script.log"
+    package_file_path = "/tmp/tmp-package-installation.log"
 
 
     if kernel_type in [KernelType.python, KernelType.spark, KernelType.spark_distributed, KernelType.vscode_python]:
@@ -1919,13 +1915,13 @@ def create_package_installation(kernel_type, pip_packages, cran_packages, init_s
                 if i == '#/bin/bash':
                     init_cmd = init_cmd + i + '\n'
                     continue
-                init_cmd = init_cmd + i + ' >> {0} 2>&1;'.format(init_script_path)
+                init_cmd = init_cmd + i + ' | tee -a {0} 2>&1;'.format(init_script_path)
         if conda_packages:
             conda_packages_list = conda_packages.split(' ')
             for each_package in conda_packages_list:
-                conda_cmd += "pip install --trusted-host {3} -i {0} {1} >> {4} " \
+                conda_cmd += "pip install --trusted-host {3} -i {0} {1} | tee -a {4} " \
                              "2>&1 || conda install -c {2} " \
-                             "--yes {1} --override-channels >> " \
+                             "--yes {1} --override-channels | tee -a " \
                              "{4} 2>&1;".format(py_url, each_package,
                                                 conda_url, trusted_host, package_file_path)
         if pip_packages is None or pip_packages == "" or pip_packages.isspace():
@@ -1933,9 +1929,9 @@ def create_package_installation(kernel_type, pip_packages, cran_packages, init_s
         else:
             package_type = 'pip'
             installation_command = "{3} " \
-                               "python /code/nas_package.py -nas_location {4} -pkg_dependency \"{1}\" -package_type {5};" \
-                                   "cat /tmp/package_present_in_venv_different_version_{5}.txt | xargs -n 1 pip uninstall --yes >> /tmp/package-uninstallation.log 2>&1;" \
-                                   "cat /tmp/missing_package_final_{5}.txt | xargs -n 1 pip install --target {6} --trusted-host {7} -i {0} --upgrade >> {8} 2>&1;" \
+                               "echo 'Executing nas_package.py script'; python /code/nas_package.py -nas_location {4} -pkg_dependency \"{1}\" -package_type {5};" \
+                                   "echo 'uninstalling diffrent version packages if any'; cat /tmp/package_present_in_venv_different_version_{5}.txt | xargs -n 1 pip uninstall --yes | tee -a /tmp/package-uninstallation.log 2>&1;" \
+                                   "echo 'installing missing packges if any'; cat /tmp/missing_package_final_{5}.txt | xargs -n 1 pip install --target {6} --trusted-host {7} -i {0} --upgrade | tee -a {8} 2>&1;" \
                             " {2} ".format(py_url, pip_packages, conda_cmd, init_cmd, current_app.config['TEMPLATE_NAS_DIRECTORY'], package_type, lib_path, trusted_host, package_file_path)
     elif kernel_type in [KernelType.r_kernel, KernelType.rstudio_kernel]:
         if init_script is None or init_script == "" or init_script.isspace():
@@ -1949,24 +1945,24 @@ def create_package_installation(kernel_type, pip_packages, cran_packages, init_s
             conda_cmd = ''
             for each_package in conda_packages_list:
                 # pylint: disable = line-too-long
-                conda_cmd += "conda install -c {0} --yes {1} --override-channels >> {2} 2>&1;" \
+                conda_cmd += "conda install -c {0} --yes {1} --override-channels | tee -a {2} 2>&1;" \
                     .format(conda_r_url, each_package, package_file_path)
         if cran_packages:
             cran_installation_command = _build_cran_package_install(kernel_type, cran_packages, cran_url)
             # pylint: disable = line-too-long
-            installation_command = f'\n {init_script} >> {init_script_path} 2>&1; {cran_installation_command} >> {package_file_path} 2>&1; \n {conda_cmd} >> {package_file_path} 2>&1;'
+            installation_command = f'\n {init_script} | tee -a {init_script_path} 2>&1; {cran_installation_command} | tee -a {package_file_path} 2>&1; \n {conda_cmd} | tee -a {package_file_path} 2>&1;'
         else:
-            installation_command = f' \n {init_script} >> {init_script_path}  2>&1; \n {conda_cmd} >> {package_file_path}  2>&1;'
+            installation_command = f' \n {init_script} | tee -a {init_script_path}  2>&1; \n {conda_cmd} | tee -a {package_file_path}  2>&1;'
 
     else:
         installation_command = ""
 
     # creating default package files at nas location when init-script and dependency section is empty
-    end_message = "-------End of log file------------"
+    end_message = "-------End of package installation logs------------"
     no_package_init_message = "No command specified in init-script that produces logs."
     no_package_depend_message = "No Package specified in dependency section that needs to be installed"
-    init_end_cmd = "[ -s {0} ] && echo {1} >> {0} 2>&1 || echo {2} >> {0} 2>&1; ".format(init_script_path, end_message, no_package_init_message)
-    dependency_end_cmd = "[ -s {0} ] && echo {1} >> {0} 2>&1 || echo {2} >> {0} 2>&1; ".format(package_file_path, end_message, no_package_depend_message)
+    init_end_cmd = "[ -s {0} ] && echo {1} | tee -a {0} 2>&1 || echo {2} | tee -a {0} 2>&1; ".format(init_script_path, end_message, no_package_init_message)
+    dependency_end_cmd = "[ -s {0} ] && echo {1} | tee -a {0} 2>&1 || echo {2} | tee -a {0} 2>&1; ".format(package_file_path, end_message, no_package_depend_message)
     installation_command = installation_command + init_end_cmd + dependency_end_cmd
 
     return installation_command
@@ -2977,7 +2973,6 @@ def create_k8_pod(container_name, docker_image_name, port_no, resources,
         name=g.user["project_id"], empty_dir=client.V1EmptyDirVolumeSource(medium="")
     )
 
-    volume_log = "log-storage"
     remote_url = create_remote_url(enabled_repo)
     base_folder = enabled_repo['base_folder']
     remote_branch = enabled_repo['branch']
@@ -3244,8 +3239,7 @@ def create_k8_pod(container_name, docker_image_name, port_no, resources,
             client.V1VolumeMount(name=volume_git.name, mount_path="/git"),
             client.V1VolumeMount(name=volume_tmp.name, mount_path="/tmp"),
             client.V1VolumeMount(name=volume_notebooks.name, mount_path="/notebooks"),
-            client.V1VolumeMount(name=volume_shared_code.name, mount_path="/code"),
-            client.V1VolumeMount(name=volume_log, mount_path=current_app.config["LOG_DIRECTORY"])
+            client.V1VolumeMount(name=volume_shared_code.name, mount_path="/code")
             ]
         notebooks_volumes_mount.extend(get_volumes_mount(project_id=g.user["project_id"]
                                                          , username=g.user["mosaicId"]
@@ -3910,7 +3904,6 @@ def get_volumes(project_id=None, username=None, snapshots=None, git_macros_confi
     else:
         volumes = volume_count(project_id, username, project_manager_base_url=current_app.config["CONSOLE_BACKEND_URL"])
     volumes.extend(volume_custom(project_id, current_app.config["SHARED_PVC"]))
-    volumes.extend(volume_custom("log-storage", "fluentd-pvc"))
 
     kubernetes_volumes = []
 
@@ -4177,7 +4170,7 @@ def volumeVolumeMounts(username, project_id):
     headers = {"X-Auth-Username": username}
 
     for item in [url, url2]:
-        response = requests.get(item, headers=headers)
+        response = get_call(item, headers)
         response = response.json()
         if response:
             for x in range(len(response)):
